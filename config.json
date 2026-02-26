@@ -7,7 +7,7 @@
     "type_filter": null,
     "include_preamble_test": true,
     "num_runs": 1,
-    "parallelism": 2,
+    "parallelism": 8,
     "timeout_seconds": 300
   },
   "grade": {

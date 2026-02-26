@@ -15,6 +15,7 @@ Subcommands:
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import csv
 import datetime as dt
 import hashlib
@@ -26,6 +27,7 @@ import re
 import statistics
 import subprocess
 import sys
+import threading
 import time
 from collections import defaultdict
 from typing import Any
@@ -547,12 +549,15 @@ def run_collect(args: argparse.Namespace) -> int:
             print("Nothing to do (all checkpointed).", flush=True)
             return 0
 
+    parallelism = collect_cfg.get("parallelism", 1)
     print(f"Collecting: {len(tasks_to_run)} tasks "
-          f"({total} total, {completed} checkpointed)", flush=True)
+          f"({total} total, {completed} checkpointed, "
+          f"parallelism={parallelism})", flush=True)
 
     records: list[dict[str, Any]] = []
-    for task in tasks_to_run:
-        completed += 1
+    io_lock = threading.Lock()
+
+    def _process_collect(task: dict[str, Any]) -> dict[str, Any]:
         record = collect_one(
             task,
             base_dir=base_dir,
@@ -561,17 +566,31 @@ def run_collect(args: argparse.Namespace) -> int:
             dry_run=bool(args.dry_run),
         )
         record["status"] = "error" if record.get("error") else "ok"
-        records.append(record)
-        append_jsonl(partial_path, record)
+        return record
 
-        status = record["status"]
-        error_suffix = f" error={record['error']}" if status == "error" else ""
-        print(
-            f"[collect {completed}/{total}] {status} "
-            f"version={record['version_id']} text={record['text_id']} "
-            f"run={record['run_index']}{error_suffix}",
-            flush=True,
-        )
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=max(1, parallelism)
+    ) as executor:
+        futures = {
+            executor.submit(_process_collect, task): task
+            for task in tasks_to_run
+        }
+        for future in concurrent.futures.as_completed(futures):
+            record = future.result()
+            with io_lock:
+                completed += 1
+                records.append(record)
+                append_jsonl(partial_path, record)
+                status = record["status"]
+                error_suffix = (
+                    f" error={record['error']}" if status == "error" else ""
+                )
+                print(
+                    f"[collect {completed}/{total}] {status} "
+                    f"version={record['version_id']} text={record['text_id']} "
+                    f"run={record['run_index']}{error_suffix}",
+                    flush=True,
+                )
 
     all_records: list[dict[str, Any]] = []
     if partial_path.exists():
@@ -743,11 +762,14 @@ def run_grade(args: argparse.Namespace) -> int:
     total = len(rows)
     completed = len(checkpoint_ids)
 
+    parallelism = grade_cfg.get("parallelism", config.get("collect", {}).get("parallelism", 1))
     print(f"Grading: {len(rows_to_grade)} rows "
-          f"({total} total, {completed} checkpointed)", flush=True)
+          f"({total} total, {completed} checkpointed, "
+          f"parallelism={parallelism})", flush=True)
 
-    for row in rows_to_grade:
-        completed += 1
+    io_lock = threading.Lock()
+
+    def _process_grade(row: dict[str, Any]) -> dict[str, Any]:
         grade_row = grade_one(
             row,
             judge_model=judge_model,
@@ -755,17 +777,31 @@ def run_grade(args: argparse.Namespace) -> int:
             dry_run=bool(args.dry_run),
         )
         grade_row["status"] = "error" if grade_row.get("error") else "ok"
-        append_jsonl(partial_path, grade_row)
+        return grade_row
 
-        status = grade_row["status"]
-        score_str = str(grade_row.get("judge_score", "?"))
-        error_suffix = f" error={grade_row['error']}" if status == "error" else ""
-        print(
-            f"[grade {completed}/{total}] {status} score={score_str} "
-            f"version={grade_row['version_id']} text={grade_row['text_id']}"
-            f"{error_suffix}",
-            flush=True,
-        )
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=max(1, parallelism)
+    ) as executor:
+        futures = {
+            executor.submit(_process_grade, row): row
+            for row in rows_to_grade
+        }
+        for future in concurrent.futures.as_completed(futures):
+            grade_row = future.result()
+            with io_lock:
+                completed += 1
+                append_jsonl(partial_path, grade_row)
+                status = grade_row["status"]
+                score_str = str(grade_row.get("judge_score", "?"))
+                error_suffix = (
+                    f" error={grade_row['error']}" if status == "error" else ""
+                )
+                print(
+                    f"[grade {completed}/{total}] {status} score={score_str} "
+                    f"version={grade_row['version_id']} "
+                    f"text={grade_row['text_id']}{error_suffix}",
+                    flush=True,
+                )
 
     all_grades: list[dict[str, Any]] = []
     if partial_path.exists():
