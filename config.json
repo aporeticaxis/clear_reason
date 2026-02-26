@@ -1,0 +1,38 @@
+{
+  "collect": {
+    "test_corpus": "test_corpus.json",
+    "prompt_versions": "prompt_versions.json",
+    "model": "claude-sonnet-4-6",
+    "version_filter": null,
+    "type_filter": null,
+    "include_preamble_test": true,
+    "num_runs": 1,
+    "parallelism": 2,
+    "timeout_seconds": 300
+  },
+  "grade": {
+    "judge_model": "claude-sonnet-4-6",
+    "timeout_seconds": 300
+  },
+  "compare": {
+    "pairs": [
+      ["v3_2026", "no_prompt"],
+      ["v3_2026", "v1_core"],
+      ["v3_2026", "v10_2025"],
+      ["v3_2026", "v3_no_constitutive_ambiguity"],
+      ["v3_2026", "v3_no_causal_conjunction"],
+      ["v3_2026", "v3_no_form_recognition"],
+      ["v3_2026", "v3_no_pre_stripping_diagnostic"],
+      ["v3_2026", "v3_no_text_type_determination"],
+      ["v3_2026", "v3_no_default_determination"],
+      ["v3_2026", "v3_no_exformation_inventory"],
+      ["v3_2026", "v3_no_circumference_check"],
+      ["v3_2026", "v3_no_deep_audit"]
+    ]
+  },
+  "console_export": {
+    "variable_name": "text",
+    "include_ideal_outputs": true,
+    "ideal_output_source": "good_formalization_indicators"
+  }
+}

@@ -1,0 +1,12 @@
+runs/
+runs_*/
+console/
+prompts/ablations/
+local_archive/
+__pycache__/
+*.pyc
+.DS_Store
+share/
+tmp_*.json
+*.zip
+*_report.html

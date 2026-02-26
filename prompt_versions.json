@@ -1,0 +1,139 @@
+{
+  "versions": [
+    {
+      "id": "no_prompt",
+      "name": "No system prompt (baseline)",
+      "type": "baseline",
+      "system_prompt_file": null,
+      "knowledge_files": []
+    },
+    {
+      "id": "v1_core",
+      "name": "v1 Core",
+      "type": "version",
+      "system_prompt_file": "prompts/v1_core.md",
+      "knowledge_files": [
+        "prompts/logic_rules_v1.md"
+      ]
+    },
+    {
+      "id": "v10_2025",
+      "name": "v10 2025",
+      "type": "version",
+      "system_prompt_file": "prompts/v10_2025_original.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ]
+    },
+    {
+      "id": "v3_2026",
+      "name": "v3 2026 (full)",
+      "type": "version",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ]
+    },
+    {
+      "id": "v3_no_constitutive_ambiguity",
+      "name": "v3 2026 minus Constitutive Ambiguity Check",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "constitutive_ambiguity"
+    },
+    {
+      "id": "v3_no_causal_conjunction",
+      "name": "v3 2026 minus Causal Conjunction Detection",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "causal_conjunction"
+    },
+    {
+      "id": "v3_no_form_recognition",
+      "name": "v3 2026 minus Form Recognition",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "form_recognition"
+    },
+    {
+      "id": "v3_no_pre_stripping_diagnostic",
+      "name": "v3 2026 minus Pre-Stripping Diagnostic",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "pre_stripping_diagnostic"
+    },
+    {
+      "id": "v3_no_text_type_determination",
+      "name": "v3 2026 minus Text-Type Determination",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "text_type_determination"
+    },
+    {
+      "id": "v3_no_default_determination",
+      "name": "v3 2026 minus Default Determination",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "default_determination"
+    },
+    {
+      "id": "v3_no_exformation_inventory",
+      "name": "v3 2026 minus Exformation Inventory",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "exformation_inventory"
+    },
+    {
+      "id": "v3_no_circumference_check",
+      "name": "v3 2026 minus Circumference Check",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "circumference_check"
+    },
+    {
+      "id": "v3_no_deep_audit",
+      "name": "v3 2026 minus Deep Audit",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v3_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "deep_audit"
+    }
+  ],
+  "ablation_headers": {
+    "constitutive_ambiguity": "**Constitutive Ambiguity Check**:",
+    "causal_conjunction": "**causal connections disguised as conjunctions**",
+    "form_recognition": "**Form Recognition**:",
+    "pre_stripping_diagnostic": "**Pre-Stripping Diagnostic**:",
+    "text_type_determination": "**Text-Type Determination**:",
+    "default_determination": "**Default Determination**",
+    "exformation_inventory": "### Exformation Inventory",
+    "circumference_check": "**Circumference Check**:",
+    "deep_audit": "**Deep Audit**"
+  }
+}

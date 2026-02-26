@@ -1,0 +1,411 @@
+{
+  "benchmark": "clear-reason-formalization",
+  "version": "1.1",
+  "quality_criterion": "socratic_test",
+  "reasoning_types": [
+    {
+      "id": "argumentative_deductive",
+      "name": "Argumentative — Deductive",
+      "texts": [
+        {
+          "id": "ad_simple",
+          "difficulty": "simple",
+          "text": "All mammals are warm-blooded. Whales are mammals. Therefore, whales are warm-blooded.",
+          "good_formalization_indicators": "Socratic interrogator can identify the logical form (Barbara syllogism), test validity, and challenge premise truth.",
+          "failure_modes": ["Forcing invalid arguments into valid form", "Missing scope ambiguities in quantifiers"],
+          "key_prompt_sections": ["variable_assignment", "logical_connectives", "quantifiers", "informal_fallacy_recognition"]
+        },
+        {
+          "id": "ad_complex",
+          "difficulty": "complex",
+          "text": "If the treaty is ratified, all member states must comply with emissions targets. Non-compliance triggers automatic sanctions. Three member states have already indicated they will not meet targets. Therefore, either the treaty will not be ratified, or sanctions will be imposed on at least three states.",
+          "good_formalization_indicators": "Socratic interrogator can identify the logical form, test validity, and trace the conditional chain to the disjunctive conclusion. Interrogator should be able to challenge the implicit assumption that indicated non-compliance entails actual non-compliance.",
+          "failure_modes": ["Forcing invalid arguments into valid form", "Missing scope ambiguities in quantifiers", "Losing the conditional chain structure", "Missing the gap between indicated and actual non-compliance"],
+          "key_prompt_sections": ["variable_assignment", "logical_connectives", "quantifiers", "informal_fallacy_recognition"]
+        },
+        {
+          "id": "ad_edge",
+          "difficulty": "edge_case",
+          "text": "Nothing is better than eternal happiness. A ham sandwich is better than nothing. Therefore, a ham sandwich is better than eternal happiness.",
+          "good_formalization_indicators": "Socratic interrogator can identify the logical form, test validity, and surface the equivocation on 'nothing' without prompting. The formalization should make visible that the two premises use 'nothing' with different logical roles.",
+          "failure_modes": ["Forcing invalid arguments into valid form", "Failing to flag the equivocation on 'nothing'", "Formalizing both premises with the same treatment of 'nothing'"],
+          "key_prompt_sections": ["variable_assignment", "logical_connectives", "quantifiers", "informal_fallacy_recognition"],
+          "notes": "Equivocation on 'nothing' — tests fallacy detection and constitutive ambiguity check."
+        }
+      ]
+    },
+    {
+      "id": "argumentative_inductive",
+      "name": "Argumentative — Inductive",
+      "texts": [
+        {
+          "id": "ai_simple",
+          "difficulty": "simple",
+          "text": "Every swan I've observed has been white. Therefore, all swans are probably white.",
+          "good_formalization_indicators": "Interrogator can assess inductive strength, identify sample limitations, and challenge the inferential gap between observed and universal.",
+          "failure_modes": ["Treating inductive arguments as deductive", "Flattening probabilistic qualifications"],
+          "key_prompt_sections": ["variable_assignment", "implicit_premise_flagging", "degrees_of_formalization"]
+        },
+        {
+          "id": "ai_complex",
+          "difficulty": "complex",
+          "text": "In the last 200 clinical trials of SSRIs, 73% showed statistically significant improvement over placebo for moderate depression. The effect sizes were modest but consistent. The remaining 27% showed no significant difference, and publication bias analysis suggests some null results went unreported. On balance, SSRIs are probably effective for moderate depression, though the true effect size may be smaller than the published literature suggests.",
+          "good_formalization_indicators": "Interrogator can assess inductive strength, identify sample limitations, and challenge the inferential gap. Interrogator should engage with the publication bias caveat and the hedging structure ('probably', 'may be smaller').",
+          "failure_modes": ["Treating inductive arguments as deductive", "Flattening probabilistic qualifications", "Missing the publication bias qualification and its impact on the conclusion"],
+          "key_prompt_sections": ["variable_assignment", "implicit_premise_flagging", "degrees_of_formalization"]
+        },
+        {
+          "id": "ai_edge",
+          "difficulty": "edge_case",
+          "text": "My neighbor's dog barks every time I walk past. My neighbor's dog barked five minutes ago. Therefore, I walked past five minutes ago.",
+          "good_formalization_indicators": "Interrogator can identify the affirming-the-consequent structure disguised as inductive reasoning and challenge the inferential gap. The formalization should make the logical error visible.",
+          "failure_modes": ["Treating inductive arguments as deductive", "Missing the affirming-the-consequent fallacy", "Treating the inference as merely weak rather than structurally flawed"],
+          "key_prompt_sections": ["variable_assignment", "implicit_premise_flagging", "degrees_of_formalization"],
+          "notes": "Affirming the consequent disguised as inductive reasoning."
+        }
+      ]
+    },
+    {
+      "id": "argumentative_abductive",
+      "name": "Argumentative — Abductive",
+      "texts": [
+        {
+          "id": "aa_simple",
+          "difficulty": "simple",
+          "text": "The grass is wet. It probably rained last night.",
+          "good_formalization_indicators": "Interrogator can evaluate competing explanations (sprinklers, dew, spill) and identify suppressed alternatives.",
+          "failure_modes": ["Treating abduction as deduction", "Failing to represent competing hypotheses"],
+          "key_prompt_sections": ["implicit_premise_flagging", "sagacity_checkpoint", "loss_assessment"]
+        },
+        {
+          "id": "aa_complex",
+          "difficulty": "complex",
+          "text": "The patient presents with fatigue, joint pain, and a butterfly-shaped facial rash. These symptoms are individually common, but their co-occurrence is characteristic of systemic lupus erythematosus. Alternative explanations — fibromyalgia (fatigue + joint pain but not rash), rosacea (facial rash but not joint pain), or rheumatoid arthritis (joint pain + fatigue but different rash pattern) — each account for a subset but not the full constellation. Lupus is the best explanation of the complete symptom profile.",
+          "good_formalization_indicators": "Interrogator can evaluate competing explanations, challenge the criteria for 'best' explanation, and identify suppressed alternatives. The differential-diagnosis structure and the 'full constellation' criterion should be explicitly represented.",
+          "failure_modes": ["Treating abduction as deduction", "Failing to represent competing hypotheses", "Not capturing the comparative structure of inference to the best explanation", "Losing the subset-vs-constellation distinction"],
+          "key_prompt_sections": ["implicit_premise_flagging", "sagacity_checkpoint", "loss_assessment"]
+        },
+        {
+          "id": "aa_edge",
+          "difficulty": "edge_case",
+          "text": "There are footprints on the ceiling. Either someone walked on the ceiling, or the room has been rotated 180 degrees, or the footprints were painted there. The most parsimonious explanation is that they were painted.",
+          "good_formalization_indicators": "Interrogator can evaluate competing explanations and challenge whether parsimony is the right criterion. The formalization should represent why the 'obvious' explanation (walking) fails and why parsimony favors painting.",
+          "failure_modes": ["Treating abduction as deduction", "Failing to represent competing hypotheses", "Not capturing why parsimony favors painting over the other explanations"],
+          "key_prompt_sections": ["implicit_premise_flagging", "sagacity_checkpoint", "loss_assessment"],
+          "notes": "Tests whether the system handles abduction where the 'best' explanation isn't the most obvious one."
+        }
+      ]
+    },
+    {
+      "id": "evidential_probabilistic",
+      "name": "Evidential-Probabilistic",
+      "texts": [
+        {
+          "id": "ep_simple",
+          "difficulty": "simple",
+          "text": "80% of people with symptom X have condition Y. This patient has symptom X. So there's an 80% chance they have condition Y.",
+          "good_formalization_indicators": "Interrogator can check the probabilistic reasoning and identify base rate neglect — the 80% figure is P(Y|X), but the conclusion requires knowing P(Y) to be meaningful.",
+          "failure_modes": ["Formalizing probabilistic arguments with deductive tools", "Missing base rate neglect in the conditional probability"],
+          "key_prompt_sections": ["degrees_of_formalization", "quantifiers", "implicit_premise_flagging"]
+        },
+        {
+          "id": "ep_complex",
+          "difficulty": "complex",
+          "text": "Prior to testing, the base rate for the disease is 1%. The test has 95% sensitivity and 90% specificity. The patient tested positive. What is the probability the patient actually has the disease?",
+          "good_formalization_indicators": "Interrogator can check the probabilistic reasoning and verify Bayesian updating. The correct posterior is approximately 8.8%, not 95%. The formalization should make the base rate, sensitivity, and specificity explicitly available for computation.",
+          "failure_modes": ["Formalizing probabilistic arguments with deductive tools", "Missing base rate fallacy", "Accepting the intuitive answer (95%) rather than the Bayesian answer (~8.8%)"],
+          "key_prompt_sections": ["degrees_of_formalization", "quantifiers", "implicit_premise_flagging"],
+          "notes": "Bayesian updating — the answer is approximately 8.8%, not 95%."
+        },
+        {
+          "id": "ep_edge",
+          "difficulty": "edge_case",
+          "text": "Three independent witnesses each say there's a 70% chance the suspect was at the scene. So the probability the suspect was at the scene is higher than any individual estimate.",
+          "good_formalization_indicators": "Interrogator can challenge the independence assumptions and check whether the probabilistic combination is valid. The conclusion doesn't follow straightforwardly — the formalization should make the independence assumption explicit and available for challenge.",
+          "failure_modes": ["Formalizing probabilistic arguments with deductive tools", "Treating independent and dependent evidence identically", "Missing that the conclusion doesn't follow straightforwardly from the premises"],
+          "key_prompt_sections": ["degrees_of_formalization", "quantifiers", "implicit_premise_flagging"],
+          "notes": "Tests whether the system handles probabilistic combination correctly — independence matters, and the conclusion doesn't follow straightforwardly."
+        }
+      ]
+    },
+    {
+      "id": "causal_explanatory",
+      "name": "Causal-Explanatory",
+      "texts": [
+        {
+          "id": "ce_simple",
+          "difficulty": "simple",
+          "text": "The bridge collapsed because of metal fatigue from repeated thermal cycling.",
+          "good_formalization_indicators": "Interrogator can assess explanatory adequacy, identify missing causal links (why did thermal cycling cause fatigue? what was the threshold?), and challenge direction of causation.",
+          "failure_modes": ["Forcing causal explanations into argument form", "Missing the difference between necessary and sufficient causal factors"],
+          "key_prompt_sections": ["text_type_determination", "causal_conjunction_detection", "loss_assessment"]
+        },
+        {
+          "id": "ce_complex",
+          "difficulty": "complex",
+          "text": "The 2008 financial crisis resulted from the interaction of several factors: deregulation of financial derivatives allowed the creation of complex mortgage-backed securities; rating agencies' conflicts of interest led to systematic overrating of these securities; low interest rates encouraged excessive borrowing; and the housing price bubble created a positive feedback loop where rising prices justified riskier lending, which further inflated prices. No single factor was sufficient; the crisis emerged from their convergence.",
+          "good_formalization_indicators": "Interrogator can assess explanatory adequacy, identify missing causal links, and challenge direction of causation. Interrogator should engage with the convergence/sufficiency distinction and the feedback loop structure. The multi-factor model should not be flattened into a linear causal chain.",
+          "failure_modes": ["Forcing causal explanations into argument form", "Missing the difference between necessary and sufficient causal factors", "Flattening the multi-factor causal model into a linear chain", "Losing the feedback loop structure"],
+          "key_prompt_sections": ["text_type_determination", "causal_conjunction_detection", "loss_assessment"]
+        },
+        {
+          "id": "ce_edge",
+          "difficulty": "edge_case",
+          "text": "Plants grow toward light because they 'want' to maximize photosynthesis.",
+          "good_formalization_indicators": "Interrogator can assess explanatory adequacy and flag the teleological metaphor applied to a non-intentional process. The formalization should distinguish the mechanistic cause (phototropism) from the teleological framing ('want').",
+          "failure_modes": ["Forcing causal explanations into argument form", "Not flagging the teleological metaphor", "Treating 'want' literally in a non-intentional context"],
+          "key_prompt_sections": ["text_type_determination", "causal_conjunction_detection", "loss_assessment"],
+          "notes": "Teleological language applied to a non-intentional process — tests whether the system recognizes the metaphorical causal framing."
+        }
+      ]
+    },
+    {
+      "id": "similarity_based",
+      "name": "Similarity-Based (Analogical and Metaphorical)",
+      "texts": [
+        {
+          "id": "sb_simple",
+          "difficulty": "simple",
+          "text": "The atom is like a solar system, with electrons orbiting the nucleus like planets orbit the sun.",
+          "good_formalization_indicators": "Interrogator can map source (solar system) to target (atom) domain, identify where the analogy breaks down (e.g., electrons don't have stable orbits in the classical sense), and assess the structural parallels.",
+          "failure_modes": ["Treating analogies as deductive arguments", "Failing to identify the limits of structural mapping"],
+          "key_prompt_sections": ["analogical_argument_handling", "metaphorical_language_protocol", "pre_stripping_diagnostic"]
+        },
+        {
+          "id": "sb_complex",
+          "difficulty": "complex",
+          "text": "Just as the immune system must distinguish self from non-self to protect the organism — sometimes erring toward autoimmune overreaction, sometimes toward immunodeficiency — a democratic society must distinguish legitimate from illegitimate speech. Too aggressive, and it suppresses dissent; too permissive, and it allows corrosive disinformation. The question is where to set the threshold, not whether a threshold exists.",
+          "good_formalization_indicators": "Interrogator can map source to target domain, identify where the analogy breaks down, and assess whether the structural parallels actually support the threshold conclusion. The parallel error modes (overreaction/immunodeficiency vs. suppression/permissiveness) should be explicitly represented.",
+          "failure_modes": ["Treating analogies as deductive arguments", "Failing to identify the limits of structural mapping", "Missing the embedded threshold argument within the analogy"],
+          "key_prompt_sections": ["analogical_argument_handling", "metaphorical_language_protocol", "pre_stripping_diagnostic"]
+        },
+        {
+          "id": "sb_edge",
+          "difficulty": "edge_case",
+          "text": "Arguing against evolution is like arguing the earth is flat.",
+          "good_formalization_indicators": "Interrogator can identify the rhetorical function (dismissal) vs. the logical content. The analogy is used to dismiss rather than illuminate — the formalization should surface this distinction rather than treating it as a substantive structural comparison.",
+          "failure_modes": ["Treating analogies as deductive arguments", "Missing rhetorical vs. logical function of analogies", "Treating a dismissive analogy as if it were a substantive structural comparison"],
+          "key_prompt_sections": ["analogical_argument_handling", "metaphorical_language_protocol", "pre_stripping_diagnostic"],
+          "notes": "Analogy used to dismiss rather than illuminate — tests whether the system identifies the rhetorical function vs. the logical content."
+        }
+      ]
+    },
+    {
+      "id": "normative_deliberative",
+      "name": "Normative-Deliberative",
+      "texts": [
+        {
+          "id": "nd_simple",
+          "difficulty": "simple",
+          "text": "We should reduce carbon emissions because climate change threatens human welfare.",
+          "good_formalization_indicators": "Interrogator can identify the normative premise (welfare matters) and the empirical premise (climate change threatens welfare), and distinguish between them.",
+          "failure_modes": ["Treating normative claims as empirical", "Flattening the distinction between 'is' and 'ought'"],
+          "key_prompt_sections": ["text_type_determination", "implicit_premise_flagging", "conclusion_framework"]
+        },
+        {
+          "id": "nd_complex",
+          "difficulty": "complex",
+          "text": "Universal basic income would reduce poverty and administrative overhead, but might reduce work incentives and would require significant tax increases. The poverty reduction is likely large and immediate; the work disincentive effects are empirically uncertain — pilot programs show mixed results depending on the amount and local labor market conditions. The fiscal cost is certain but the magnitude depends on the specific proposal. On balance, a modest UBI pilot is worth trying because the information value of learning the actual effects outweighs the fiscal cost of the pilot.",
+          "good_formalization_indicators": "Interrogator can identify the normative premises, distinguish empirical from evaluative claims, and challenge the weighing of considerations. The meta-level argument about information value should be separately identifiable from the object-level pros and cons.",
+          "failure_modes": ["Treating normative claims as empirical", "Flattening the distinction between 'is' and 'ought'", "Missing the meta-level information-value argument", "Collapsing the uncertainty qualifications"],
+          "key_prompt_sections": ["text_type_determination", "implicit_premise_flagging", "conclusion_framework"]
+        },
+        {
+          "id": "nd_edge",
+          "difficulty": "edge_case",
+          "text": "Torture is always wrong. But if torturing one person would certainly save a million lives, is it still wrong?",
+          "good_formalization_indicators": "Interrogator can identify the normative premises and engage with the conflict between deontological and consequentialist principles rather than resolving it prematurely. The formalization should preserve the tension, not collapse it.",
+          "failure_modes": ["Treating normative claims as empirical", "Flattening the distinction between 'is' and 'ought'", "Resolving the moral dilemma prematurely by picking a side"],
+          "key_prompt_sections": ["text_type_determination", "implicit_premise_flagging", "conclusion_framework"],
+          "notes": "Tests handling of moral dilemmas where two normative principles conflict."
+        }
+      ]
+    },
+    {
+      "id": "temporal_sequential",
+      "name": "Temporal-Sequential",
+      "texts": [
+        {
+          "id": "ts_simple",
+          "difficulty": "simple",
+          "text": "The alarm went off before the sprinklers activated. The sprinklers activated before the fire department arrived.",
+          "good_formalization_indicators": "Interrogator can assess whether temporal ordering is correctly represented and verify transitivity of the 'before' relation.",
+          "failure_modes": ["Losing temporal information in formalization", "Conflating temporal sequence with logical consequence"],
+          "key_prompt_sections": ["temporal_operators", "causal_conjunction_detection", "informal_fallacy_recognition"]
+        },
+        {
+          "id": "ts_complex",
+          "difficulty": "complex",
+          "text": "The company's stock price began declining six months before the CEO's resignation was announced. Three months before the resignation, insider selling increased significantly. Two weeks before the announcement, a short-selling firm published a critical report. The timeline suggests the decline was driven by insider knowledge of impending problems, not by the short-seller's report, which merely accelerated an existing trend.",
+          "good_formalization_indicators": "Interrogator can assess whether temporal ordering supports the causal claims, identify gaps in the timeline, and challenge the inference from sequence to causation. Adequate temporal operators are needed for the multi-event timeline with relative dates.",
+          "failure_modes": ["Losing temporal information in formalization", "Conflating temporal sequence with logical consequence", "Not having adequate temporal operators for the multi-event timeline"],
+          "key_prompt_sections": ["temporal_operators", "causal_conjunction_detection", "informal_fallacy_recognition"]
+        },
+        {
+          "id": "ts_edge",
+          "difficulty": "edge_case",
+          "text": "Post hoc ergo propter hoc: the rooster crows before sunrise, therefore the rooster causes the sunrise.",
+          "good_formalization_indicators": "Interrogator can identify the post hoc ergo propter hoc fallacy and challenge the inference from temporal sequence to causal connection. The formalization should make the fallacious step explicit.",
+          "failure_modes": ["Losing temporal information in formalization", "Conflating temporal sequence with logical consequence", "Failing to identify the post hoc ergo propter hoc fallacy"],
+          "key_prompt_sections": ["temporal_operators", "causal_conjunction_detection", "informal_fallacy_recognition"],
+          "notes": "Tests whether temporal formalization preserves the distinction between temporal sequence and causal connection."
+        }
+      ]
+    },
+    {
+      "id": "systemic_configurational",
+      "name": "Systemic-Configurational",
+      "texts": [
+        {
+          "id": "sc_simple",
+          "difficulty": "simple",
+          "text": "A recipe requires flour, sugar, and eggs. We have flour and eggs but no sugar. Therefore, we cannot make the recipe.",
+          "good_formalization_indicators": "Interrogator can identify the conjunctive requirement structure and trace which constraint is unsatisfied.",
+          "failure_modes": ["Missing dependency relationships between constraints", "Treating conjunctive requirements as independent"],
+          "key_prompt_sections": ["quantifiers", "variable_assignment", "form_recognition"]
+        },
+        {
+          "id": "sc_complex",
+          "difficulty": "complex",
+          "text": "For the satellite to function, the following must all be true: the solar panels generate sufficient power, the attitude control system maintains orientation, the communication antenna has line-of-sight to a ground station, and the onboard computer is operational. The solar panels depend on orientation (attitude control), communication depends on both orientation and computer processing, and the computer depends on power. A failure in attitude control would therefore cascade: loss of orientation → reduced solar power → computer failure → communication loss.",
+          "good_formalization_indicators": "Interrogator can trace dependency chains, identify single points of failure (attitude control), and challenge whether the constraint model is complete. The cascade structure should be explicitly represented, not just the conjunction.",
+          "failure_modes": ["Missing dependency relationships between constraints", "Treating conjunctive requirements as independent", "Flattening the cascade into a simple conjunction"],
+          "key_prompt_sections": ["quantifiers", "variable_assignment", "form_recognition"]
+        },
+        {
+          "id": "sc_edge",
+          "difficulty": "edge_case",
+          "text": "The ship of Theseus: if every plank is replaced one by one, is the resulting ship the same ship? If the original planks are reassembled into a second ship, which is the 'real' ship of Theseus?",
+          "good_formalization_indicators": "Interrogator can engage with the identity criteria rather than forcing a resolution. The contested nature of the constraints themselves (what constitutes identity?) should be preserved in the formalization.",
+          "failure_modes": ["Missing dependency relationships between constraints", "Forcing the edge case into a determinate answer", "Collapsing the identity puzzle into a single resolution"],
+          "key_prompt_sections": ["quantifiers", "variable_assignment", "form_recognition"],
+          "notes": "Constraint-satisfaction where the constraints themselves are contested."
+        }
+      ]
+    },
+    {
+      "id": "defeasible_revisable",
+      "name": "Defeasible-Revisable",
+      "texts": [
+        {
+          "id": "dr_simple",
+          "difficulty": "simple",
+          "text": "Birds typically fly. Tweety is a bird. Therefore, Tweety probably flies. / Birds typically fly. Tweety is a penguin. Penguins don't fly. Therefore, Tweety probably doesn't fly.",
+          "good_formalization_indicators": "Interrogator can identify the defeasible inference and the defeater (penguin exception) that overrides it. The default-with-exception structure should be explicit.",
+          "failure_modes": ["Treating defeasible reasoning as deductive", "Missing the defeater"],
+          "key_prompt_sections": ["implicit_premise_flagging", "degrees_of_formalization", "epistemic_humility"]
+        },
+        {
+          "id": "dr_complex",
+          "difficulty": "complex",
+          "text": "The defendant was seen near the crime scene at the time of the crime, which is evidence of guilt. However, the defendant works in the building next door and is routinely present at that location, which defeats the inference from proximity. But a witness reported the defendant acting nervously and avoiding eye contact with security cameras, which reinstates suspicion. However, the witness has a history of unreliable testimony in prior cases, which partially defeats the reinstatement.",
+          "good_formalization_indicators": "Interrogator can trace the chain of defeaters and reinstaters (evidence → defeat → reinstatement → partial defeat), assess the relative strength at each stage, and identify whether any defeasible inference was treated as conclusive.",
+          "failure_modes": ["Treating defeasible reasoning as deductive", "Missing defeaters", "Not representing the layered structure of defeat and reinstatement"],
+          "key_prompt_sections": ["implicit_premise_flagging", "degrees_of_formalization", "epistemic_humility"]
+        },
+        {
+          "id": "dr_edge",
+          "difficulty": "edge_case",
+          "text": "All of my evidence suggests the investment is sound. But I know that all of my evidence might be misleading — I've been wrong before in exactly this kind of situation.",
+          "good_formalization_indicators": "Interrogator can engage with the self-defeating structure without collapsing it. The evidence undermines itself recursively — this structure should be preserved, not resolved into a simple conclusion.",
+          "failure_modes": ["Treating defeasible reasoning as deductive", "Collapsing the self-referential structure", "Resolving the self-defeating defeater into a simple conclusion"],
+          "key_prompt_sections": ["implicit_premise_flagging", "degrees_of_formalization", "epistemic_humility"],
+          "notes": "Self-defeating defeater — the evidence for doubt is itself defeasible."
+        }
+      ]
+    },
+    {
+      "id": "non_argumentative_explanations",
+      "name": "Non-Argumentative — Explanations",
+      "texts": [
+        {
+          "id": "ne_simple",
+          "difficulty": "simple",
+          "text": "The cat knocked the vase off the table.",
+          "good_formalization_indicators": "The system identifies this as an explanation (via text-type determination) and formalizes the causal structure rather than looking for argument structure.",
+          "failure_modes": ["Treating explanations as arguments", "Looking for premises and conclusions where there are causes and effects"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"]
+        },
+        {
+          "id": "ne_complex",
+          "difficulty": "complex",
+          "text": "Antibiotic resistance develops because bacteria with random mutations that confer resistance survive antibiotic treatment, while susceptible bacteria are killed. The surviving resistant bacteria reproduce, passing the resistance trait to their offspring. Over successive generations, the proportion of resistant bacteria in the population increases. This process is accelerated by antibiotic overuse, which increases selective pressure.",
+          "good_formalization_indicators": "The system identifies this as an explanation, formalizes the multi-step causal/mechanistic structure, and assesses explanatory adequacy. The selective-pressure mechanism should be represented as a causal chain, not premises in an argument.",
+          "failure_modes": ["Treating explanations as arguments", "Assessing 'validity' of an explanation", "Flattening the multi-step causal mechanism into a single cause-effect"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"]
+        },
+        {
+          "id": "ne_edge",
+          "difficulty": "edge_case",
+          "text": "The reason there's something rather than nothing is that nothingness is unstable.",
+          "good_formalization_indicators": "The system identifies this as an explanation and assesses explanatory adequacy. The potential circularity (explaining existence by attributing a property to non-existence) or metaphorical nature should be flagged without forcing argumentative structure.",
+          "failure_modes": ["Treating explanations as arguments", "Assessing 'validity' of an explanation", "Missing the circularity or metaphorical nature of the explanation"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"],
+          "notes": "Explanation that may be circular or metaphorical — tests whether the system assesses explanatory adequacy without forcing argumentative structure."
+        }
+      ]
+    },
+    {
+      "id": "non_argumentative_deliberations",
+      "name": "Non-Argumentative — Deliberations",
+      "texts": [
+        {
+          "id": "nl_simple",
+          "difficulty": "simple",
+          "text": "I could take the highway, which is faster but has tolls, or the back roads, which are slower but free.",
+          "good_formalization_indicators": "The system identifies this as a deliberation and represents the considerations (speed vs. cost) without forcing a conclusion.",
+          "failure_modes": ["Forcing a conclusion where none exists", "Treating considerations as premises in a deductive argument"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"]
+        },
+        {
+          "id": "nl_complex",
+          "difficulty": "complex",
+          "text": "Should we open-source the model? Releasing it would accelerate research, enable external safety audits, and build community trust. But it would also enable misuse by bad actors, make it harder to correct problems post-deployment, and potentially undermine our competitive position. The safety team is split: half argue that external scrutiny improves safety outcomes net of misuse risk; half argue that the misuse risk is unquantifiable and irreversible. We don't have to decide today — a staged release (API access → weights for vetted researchers → full open-source) preserves optionality.",
+          "good_formalization_indicators": "The system identifies this as a deliberation, represents the considerations and their weights without forcing a conclusion, and assesses completeness of consideration. The staged-release proposal should be represented as preserving optionality, not as a definitive conclusion.",
+          "failure_modes": ["Forcing a conclusion where none exists", "Treating considerations as premises in a deductive argument", "Treating the staged-release suggestion as a definitive conclusion"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"]
+        },
+        {
+          "id": "nl_edge",
+          "difficulty": "edge_case",
+          "text": "On one hand, I want to be honest. On the other hand, the truth would hurt them. On the third hand — if I had a third hand — maybe there's a way to be honest without being cruel.",
+          "good_formalization_indicators": "The system identifies this as a deliberation and represents the considerations without forcing a conclusion. The frame-shift from binary (honest vs. kind) to creative re-framing (honest-without-cruel) should be preserved.",
+          "failure_modes": ["Forcing a conclusion where none exists", "Treating considerations as premises in a deductive argument", "Missing the frame-shift from binary opposition to creative third option"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"],
+          "notes": "Deliberation that shifts frames mid-stream."
+        }
+      ]
+    },
+    {
+      "id": "non_argumentative_explorations",
+      "name": "Non-Argumentative — Explorations",
+      "texts": [
+        {
+          "id": "nx_simple",
+          "difficulty": "simple",
+          "text": "What if gravity worked in reverse above a certain altitude?",
+          "good_formalization_indicators": "The system identifies this as an exploration and traces the hypothetical implications without demanding a conclusion or truth-evaluation.",
+          "failure_modes": ["Forcing explorations into argumentative structure", "Demanding truth-evaluation of hypotheticals"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"]
+        },
+        {
+          "id": "nx_complex",
+          "difficulty": "complex",
+          "text": "Imagine a society where all decisions are made by lottery. Legislation, judicial appointments, corporate governance — all assigned randomly from the eligible population. What would the effects be? Corruption might decrease, since there's no position to campaign for. Expertise might decrease, since selection isn't skill-based. Accountability might shift from electoral to legal mechanisms. The interesting question isn't whether this is better or worse than representative democracy, but what it reveals about which features of our current system we consider essential vs. contingent.",
+          "good_formalization_indicators": "The system identifies this as an exploration, traces the hypothetical implications consistently, and assesses internal coherence. The meta-level insight (essential vs. contingent features) should be preserved alongside the object-level implications.",
+          "failure_modes": ["Forcing explorations into argumentative structure", "Demanding truth-evaluation of hypotheticals", "Missing the meta-level reflection about essential vs. contingent features"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"]
+        },
+        {
+          "id": "nx_edge",
+          "difficulty": "edge_case",
+          "text": "What if this sentence is false?",
+          "good_formalization_indicators": "The system identifies this as an exploration and can formalize the self-referential paradox structure without attempting to resolve it. The liar paradox should be represented, not solved.",
+          "failure_modes": ["Forcing explorations into argumentative structure", "Attempting to resolve the liar paradox rather than formalizing its structure"],
+          "key_prompt_sections": ["text_type_determination", "conclusion_framework"],
+          "notes": "Self-referential paradox presented as exploration — tests whether the system can formalize without resolving."
+        }
+      ]
+    }
+  ]
+}

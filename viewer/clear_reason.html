@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clear Reason &mdash; Results Dashboard</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --panel: #fffefb;
+      --ink: #1f2623;
+      --muted: #5f6f6a;
+      --line: #d6ddd8;
+      --teal: #0f766e;
+      --teal-soft: #d8f3ef;
+      --green: #1f9d55;
+      --amber: #d88710;
+      --red: #c13d36;
+      --deep-red: #8a1f1a;
+      --error: #4a5350;
+      --shadow: 0 10px 30px rgba(20, 35, 30, 0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0; min-height: 100%;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at 100% -50%, #d9efe9 0%, transparent 70%),
+        radial-gradient(1000px 600px at -10% 10%, #f6ecd8 0%, transparent 70%),
+        var(--bg);
+      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+
+    .page {
+      width: min(1600px, 96vw);
+      margin: 28px auto 48px;
+      display: grid;
+      gap: 18px;
+      animation: fade-up 500ms ease-out both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Hero --- */
+    .hero {
+      background: linear-gradient(132deg, #113630 0%, #1b5f55 60%, #1d7268 100%);
+      color: #f2faf8;
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+    }
+    .hero h1 {
+      margin: 0;
+      font-family: "Rockwell", "Georgia", serif;
+      letter-spacing: 0.2px;
+      font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    }
+    .hero-subtitle { margin: 8px 0 0; color: #cde9e3; max-width: 920px; }
+    .hero-row {
+      display: flex; align-items: center; gap: 14px;
+      flex-wrap: wrap; margin-top: 12px;
+    }
+    .hero select {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: #e6f4f1;
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-size: 0.84rem;
+      outline: none;
+    }
+    .hero select option { background: #1b5f55; color: #fff; }
+    .hero-meta {
+      font-size: 0.82rem; color: #a8d5cc;
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .hero-link {
+      border: 1px solid rgba(255,255,255,0.5);
+      color: #e6f4f1;
+      background: rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 7px 11px;
+      font-size: 0.84rem;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .hero-link:hover { background: rgba(255,255,255,0.14); }
+
+    /* --- Panels --- */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      animation: fade-up 550ms ease both;
+    }
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 1.15rem;
+      font-family: "Rockwell", "Georgia", serif;
+    }
+    .panel h3 { margin: 0 0 8px; font-size: 1rem; }
+    .subtle { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
+    /* --- KPIs --- */
+    .kpis {
+      display: grid; gap: 10px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+    .kpi .label { font-size: 0.79rem; color: var(--muted); margin-bottom: 4px; }
+    .kpi .value { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.1px; }
+    .kpi .hint { font-size: 0.77rem; color: #667a74; margin-top: 2px; }
+    .kpi.green .value { color: var(--green); }
+    .kpi.teal .value  { color: var(--teal); }
+    .kpi.amber .value { color: var(--amber); }
+    .kpi.red .value   { color: var(--red); }
+
+    /* --- Leaderboard Table --- */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    th, td { padding: 9px 12px; text-align: left; }
+    th {
+      background: #f4f7f5;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      border-bottom: 2px solid var(--line);
+    }
+    th:hover { color: var(--teal); }
+    th .sort-arrow { margin-left: 4px; font-size: 0.7rem; }
+    td { border-bottom: 1px solid #edf1ef; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9fcfb; }
+    .rank-cell { font-weight: 700; color: var(--teal); width: 50px; }
+    .score-big {
+      font-weight: 700; font-size: 1.05rem;
+    }
+    .score-big.high { color: var(--green); }
+    .score-big.mid  { color: var(--amber); }
+    .score-big.low  { color: var(--red); }
+
+    /* Score distribution bar */
+    .dist-bar {
+      display: flex; height: 20px; border-radius: 999px;
+      overflow: hidden; border: 1px solid #d1d9d4;
+      background: #f3f6f4; min-width: 120px;
+    }
+    .dist-seg { height: 100%; transition: width 280ms ease; }
+    .dist-seg.s0 { background: var(--red); }
+    .dist-seg.s1 { background: var(--amber); }
+    .dist-seg.s2 { background: var(--green); }
+    .dist-legend {
+      display: flex; gap: 10px; font-size: 0.78rem;
+      color: var(--muted); margin-top: 6px;
+    }
+    .dist-legend span { display: inline-flex; align-items: center; gap: 4px; }
+    .dot {
+      width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+    }
+    .dot.s0 { background: var(--red); }
+    .dot.s1 { background: var(--amber); }
+    .dot.s2 { background: var(--green); }
+
+    /* --- Heatmap --- */
+    .heatmap-grid {
+      display: grid; gap: 2px;
+      margin-top: 8px;
+    }
+    .heatmap-cell {
+      border-radius: 8px;
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: transform 120ms ease;
+    }
+    .heatmap-cell:hover { transform: scale(1.04); }
+    .heatmap-header {
+      font-size: 0.76rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 600;
+      padding: 6px 8px;
+      text-align: center;
+      background: transparent;
+    }
+    .heatmap-row-label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--ink);
+      padding: 10px 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* --- Pairwise --- */
+    .pair-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff;
+      margin-bottom: 10px;
+    }
+    .pair-header {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .pair-title { font-weight: 700; font-size: 0.95rem; }
+    .pair-stats {
+      display: flex; gap: 14px; font-size: 0.84rem; color: var(--muted);
+    }
+    .pair-stats strong { color: var(--ink); }
+    .win-bar-wrap {
+      margin-top: 8px;
+      display: flex; height: 24px; border-radius: 999px;
+      overflow: hidden; border: 1px solid #d1d9d4;
+    }
+    .win-seg {
+      height: 100%; display: flex; align-items: center;
+      justify-content: center; font-size: 0.72rem;
+      font-weight: 600; color: #fff;
+      transition: width 280ms ease;
+    }
+    .win-seg.a { background: var(--teal); }
+    .win-seg.tie { background: #a0b5ae; }
+    .win-seg.b { background: var(--amber); }
+
+    /* --- Grade cards (Where Points Were Lost) --- */
+    .grade-filters {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .grade-filters select {
+      border: 1px solid #bcc9c2;
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: 0.84rem;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+    .grade-filters select:focus {
+      border-color: #5aa495;
+      box-shadow: 0 0 0 2px rgba(51,129,112,0.14);
+    }
+    .grade-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    .grade-card summary {
+      padding: 10px 14px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.88rem;
+      list-style: none;
+    }
+    .grade-card summary::-webkit-details-marker { display: none; }
+    .grade-card summary::before {
+      content: "\25B6"; font-size: 0.65rem; color: var(--muted);
+      transition: transform 200ms ease;
+    }
+    .grade-card[open] summary::before { transform: rotate(90deg); }
+    .grade-card summary .score-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%;
+      font-weight: 700; font-size: 0.82rem; color: #fff;
+    }
+    .score-badge.s0 { background: var(--red); }
+    .score-badge.s1 { background: var(--amber); }
+    .score-badge.s2 { background: var(--green); }
+    .grade-card summary .version-tag {
+      background: var(--teal-soft);
+      color: var(--teal);
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .grade-card summary .type-tag {
+      background: #f0eee6;
+      color: #6b5f4b;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.78rem;
+    }
+    .grade-card summary .diff-tag {
+      font-size: 0.78rem; color: var(--muted);
+    }
+    .grade-detail {
+      padding: 0 14px 14px;
+      font-size: 0.86rem;
+      line-height: 1.55;
+    }
+    .grade-detail h4 {
+      margin: 10px 0 4px;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--muted);
+    }
+    .grade-detail .justification {
+      background: #f8faf9;
+      border: 1px solid #e5ebe8;
+      border-radius: 8px;
+      padding: 10px;
+      color: #2a3a34;
+    }
+    .grade-detail .formalization-text {
+      background: #faf9f5;
+      border: 1px solid #e8e4d8;
+      border-radius: 8px;
+      padding: 10px;
+      color: #2a3a34;
+      white-space: pre-wrap;
+      font-family: "Fira Code", "SF Mono", "Menlo", monospace;
+      font-size: 0.82rem;
+      max-height: 400px;
+      overflow: auto;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 32px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .loading {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+    }
+    .loading::after {
+      content: "";
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2px solid var(--line);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 600ms linear infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Comparison detail in pairwise */
+    .cmp-detail-list { padding: 8px 0 0; }
+    .cmp-item {
+      border-top: 1px solid #edf1ef;
+      padding: 8px 0;
+      font-size: 0.84rem;
+    }
+    .cmp-item .cmp-meta {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .cmp-winner {
+      font-weight: 700; font-size: 0.82rem;
+      padding: 2px 8px; border-radius: 6px;
+    }
+    .cmp-winner.a { background: var(--teal-soft); color: var(--teal); }
+    .cmp-winner.b { background: #fff3dc; color: #8a6200; }
+    .cmp-winner.tie { background: #eef1ef; color: var(--muted); }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .kpis { grid-template-columns: repeat(2, 1fr); }
+      .hero-row { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .kpis { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="page" id="app">
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Clear Reason Results</h1>
+    <p class="hero-subtitle">
+      Formalization quality benchmark &mdash; comparing prompt versions on reasoning fidelity,
+      interrogation readiness, and structural clarity.
+    </p>
+    <div class="hero-row">
+      <label style="color:#a8d5cc; font-size:0.82rem;">
+        Run:
+        <select id="run-select" onchange="switchRun(this.value)">
+          <option id="run-opt-current">Loading&hellip;</option>
+        </select>
+      </label>
+      <div class="hero-meta" id="hero-meta"></div>
+      <a class="hero-link" href="../index.html">&larr; Home</a>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpis" id="kpi-bar">
+    <div class="kpi"><div class="label">Loading&hellip;</div></div>
+  </div>
+
+  <!-- Leaderboard -->
+  <div class="panel" id="leaderboard-panel">
+    <h2>Leaderboard</h2>
+    <p class="subtle">Prompt versions ranked by average judge score (0 = opaque, 1 = functional, 2 = interrogation-ready)</p>
+    <div class="table-wrap" id="leaderboard-wrap">
+      <div class="loading">Loading leaderboard</div>
+    </div>
+    <div class="dist-legend" style="margin-top:8px">
+      <span><span class="dot s0"></span> Score 0</span>
+      <span><span class="dot s1"></span> Score 1</span>
+      <span><span class="dot s2"></span> Score 2</span>
+    </div>
+  </div>
+
+  <!-- Per-Type Heatmap -->
+  <div class="panel" id="heatmap-panel">
+    <h2>Per-Type Breakdown</h2>
+    <p class="subtle">Average score by version and reasoning type (color: red 0 &rarr; amber 1 &rarr; green 2)</p>
+    <div id="heatmap-grid"></div>
+  </div>
+
+  <!-- Pairwise Head-to-Head -->
+  <div class="panel" id="pairwise-panel">
+    <h2>Pairwise Head-to-Head</h2>
+    <p class="subtle">Blinded comparison results &mdash; which version the judge preferred on each text</p>
+    <div id="pairwise-list">
+      <div class="loading">Loading comparisons</div>
+    </div>
+  </div>
+
+  <!-- Where Points Were Lost -->
+  <div class="panel" id="lost-panel">
+    <h2>Where Points Were Lost</h2>
+    <p class="subtle">Grades below 2 (interrogation-ready) &mdash; expand for justification and formalization</p>
+    <div class="grade-filters" id="grade-filters"></div>
+    <div id="grade-list">
+      <div class="loading">Loading grades</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── State ── */
+const runParam = new URLSearchParams(location.search).get("run");
+let RUN_ID = runParam && runParam.trim() ? runParam.trim() : "";
+let BASE = RUN_ID ? `../runs/${RUN_ID}` : "";
+let summary = null;
+let manifest = null;
+let gradesData = null;
+let comparisonsData = null;
+
+/* ── Boot ── */
+async function boot() {
+  renderHero(null);
+  if (!RUN_ID) {
+    renderNoRunSelected();
+    return;
+  }
+
+  try {
+    manifest = await fetchJSON(`${BASE}/run_manifest.json`);
+  } catch { manifest = {}; }
+
+  try {
+    const meta = await fetchJSON(`${BASE}/collect_meta.json`);
+    renderHero(meta);
+  } catch {}
+
+  try {
+    summary = await fetchJSON(`${BASE}/aggregate/aggregate_summary.json`);
+    renderKPIs(summary);
+    renderLeaderboard(summary.leaderboard);
+    renderHeatmap(summary.per_type_breakdown, summary.leaderboard);
+    renderPairwise(summary.comparison_pairs);
+  } catch (e) {
+    document.getElementById("kpi-bar").innerHTML =
+      `<div class="kpi"><div class="label" style="color:var(--red)">Failed to load aggregate_summary.json: ${esc(e.message)}</div></div>`;
+  }
+
+  loadGrades();
+}
+
+/* ── Data helpers ── */
+async function fetchJSON(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  return r.json();
+}
+
+async function fetchJSONL(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+  const text = await r.text();
+  return text.trim().split("\n").filter(Boolean).map(l => JSON.parse(l));
+}
+
+function esc(s) {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function fmt(n, d = 4) {
+  return Number(n).toFixed(d).replace(/\.?0+$/, "") || "0";
+}
+
+function pct(n) { return (n * 100).toFixed(1) + "%"; }
+
+/* ── Run switching ── */
+function switchRun(id) {
+  if (!id) return;
+  const u = new URL(location.href);
+  u.searchParams.set("run", id);
+  location.href = u.toString();
+}
+
+/* ── Hero ── */
+function renderHero(meta) {
+  const sel = document.getElementById("run-select");
+  if (RUN_ID) {
+    sel.disabled = false;
+    sel.innerHTML = `<option value="${esc(RUN_ID)}" selected>${esc(RUN_ID)}</option>`;
+  } else {
+    sel.disabled = true;
+    sel.innerHTML = `<option selected>No run selected</option>`;
+  }
+
+  const metaEl = document.getElementById("hero-meta");
+  if (meta) {
+    const parts = [];
+    if (meta.model) parts.push(`Model: ${esc(meta.model)}`);
+    if (meta.version_count) parts.push(`${meta.version_count} versions`);
+    if (meta.text_count) parts.push(`${meta.text_count} texts`);
+    if (meta.timestamp_utc) {
+      const d = new Date(meta.timestamp_utc);
+      parts.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }));
+    }
+    metaEl.innerHTML = parts.map(p => `<span>${p}</span>`).join("");
+  } else if (RUN_ID) {
+    metaEl.innerHTML = `<span>Run: ${esc(RUN_ID)}</span>`;
+  } else {
+    metaEl.innerHTML = "";
+  }
+
+  /* Try to discover other runs */
+  tryDiscoverRuns();
+}
+
+async function tryDiscoverRuns() {
+  /* We can't list directories via fetch, so just show the current run.
+     If more run_manifest.json files are linked in the future, we'd add them here. */
+}
+
+function renderNoRunSelected() {
+  const message = "No run selected. Open this page with ?run=<run_id> to load results.";
+  document.getElementById("hero-meta").innerHTML =
+    `<span>${message}</span>`;
+  document.getElementById("kpi-bar").innerHTML =
+    `<div class="kpi"><div class="label">${message}</div></div>`;
+  document.getElementById("leaderboard-wrap").innerHTML =
+    `<div class="empty-state">${message}</div>`;
+  document.getElementById("heatmap-grid").innerHTML =
+    `<div class="empty-state">${message}</div>`;
+  document.getElementById("pairwise-list").innerHTML =
+    `<div class="empty-state">${message}</div>`;
+  document.getElementById("grade-filters").innerHTML = "";
+  document.getElementById("grade-list").innerHTML =
+    `<div class="empty-state">${message}</div>`;
+}
+
+/* ── KPIs ── */
+function renderKPIs(s) {
+  const top = s.leaderboard[0];
+  const totalErrors = s.leaderboard.reduce((a, v) => a + (v.error_count || 0), 0);
+  const errorRate = s.total_formalizations > 0
+    ? (totalErrors / s.total_formalizations * 100).toFixed(1) + "%"
+    : "0%";
+
+  document.getElementById("kpi-bar").innerHTML = `
+    <div class="kpi teal">
+      <div class="label">Total Formalizations</div>
+      <div class="value">${s.total_formalizations}</div>
+      <div class="hint">across ${s.leaderboard.length} versions</div>
+    </div>
+    <div class="kpi teal">
+      <div class="label">Pairwise Comparisons</div>
+      <div class="value">${s.total_comparisons}</div>
+      <div class="hint">${s.comparison_pairs.length} pairs</div>
+    </div>
+    <div class="kpi green">
+      <div class="label">Top Version</div>
+      <div class="value">${esc(top.version_id)}</div>
+      <div class="hint">avg ${fmt(top.avg_score)} &middot; IR ${pct(top.interrogation_ready_rate)}</div>
+    </div>
+    <div class="kpi ${totalErrors > 0 ? "red" : "green"}">
+      <div class="label">Error Rate</div>
+      <div class="value">${errorRate}</div>
+      <div class="hint">${totalErrors} errors of ${s.total_formalizations}</div>
+    </div>
+  `;
+}
+
+/* ── Leaderboard ── */
+let lbSortCol = "avg_score";
+let lbSortAsc = false;
+
+function renderLeaderboard(lb) {
+  const sorted = [...lb].sort((a, b) => {
+    let va = a[lbSortCol], vb = b[lbSortCol];
+    if (typeof va === "string") return lbSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return lbSortAsc ? va - vb : vb - va;
+  });
+
+  const arrow = (col) => col === lbSortCol
+    ? `<span class="sort-arrow">${lbSortAsc ? "\u25B2" : "\u25BC"}</span>` : "";
+
+  const cols = [
+    { key: "_rank", label: "#" },
+    { key: "version_id", label: "Version" },
+    { key: "avg_score", label: "Avg Score" },
+    { key: "interrogation_ready_rate", label: "IR Rate" },
+    { key: "scored_count", label: "Graded" },
+    { key: "error_count", label: "Errors" },
+    { key: "_dist", label: "Distribution" },
+  ];
+
+  let html = `<table><thead><tr>`;
+  for (const c of cols) {
+    if (c.key === "_rank" || c.key === "_dist") {
+      html += `<th>${c.label}</th>`;
+    } else {
+      html += `<th onclick="sortLeaderboard('${c.key}')">${c.label}${arrow(c.key)}</th>`;
+    }
+  }
+  html += `</tr></thead><tbody>`;
+
+  sorted.forEach((v, i) => {
+    const total = v.score_0 + v.score_1 + v.score_2;
+    const p0 = total ? (v.score_0 / total * 100) : 0;
+    const p1 = total ? (v.score_1 / total * 100) : 0;
+    const p2 = total ? (v.score_2 / total * 100) : 0;
+    const sc = v.avg_score >= 1.8 ? "high" : v.avg_score >= 1.2 ? "mid" : "low";
+
+    html += `<tr>
+      <td class="rank-cell">${i + 1}</td>
+      <td><strong>${esc(v.version_id)}</strong></td>
+      <td><span class="score-big ${sc}">${fmt(v.avg_score)}</span></td>
+      <td>${pct(v.interrogation_ready_rate)}</td>
+      <td>${v.scored_count}</td>
+      <td>${v.error_count}</td>
+      <td>
+        <div class="dist-bar">
+          <div class="dist-seg s0" style="width:${p0}%" title="Score 0: ${v.score_0}"></div>
+          <div class="dist-seg s1" style="width:${p1}%" title="Score 1: ${v.score_1}"></div>
+          <div class="dist-seg s2" style="width:${p2}%" title="Score 2: ${v.score_2}"></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  document.getElementById("leaderboard-wrap").innerHTML = html;
+}
+
+function sortLeaderboard(col) {
+  if (lbSortCol === col) lbSortAsc = !lbSortAsc;
+  else { lbSortCol = col; lbSortAsc = col === "version_id"; }
+  renderLeaderboard(summary.leaderboard);
+}
+
+/* ── Heatmap ── */
+function renderHeatmap(perType, leaderboard) {
+  const versions = Object.keys(perType);
+  if (!versions.length) {
+    document.getElementById("heatmap-grid").innerHTML =
+      `<div class="empty-state">No per-type data available</div>`;
+    return;
+  }
+  const types = [...new Set(versions.flatMap(v => Object.keys(perType[v])))].sort();
+  const numCols = types.length + 1;
+
+  const grid = document.getElementById("heatmap-grid");
+  grid.style.gridTemplateColumns = `160px repeat(${types.length}, 1fr)`;
+  grid.classList.add("heatmap-grid");
+
+  let html = `<div class="heatmap-header"></div>`;
+  for (const t of types) {
+    html += `<div class="heatmap-header">${esc(t.replace(/_/g, " "))}</div>`;
+  }
+
+  for (const v of versions) {
+    html += `<div class="heatmap-row-label">${esc(v)}</div>`;
+    for (const t of types) {
+      const val = perType[v][t];
+      const display = val !== undefined ? fmt(val, 2) : "\u2014";
+      const bg = val !== undefined ? heatColor(val) : "#f3f6f4";
+      const fg = val !== undefined && val < 0.8 ? "#fff" : val !== undefined && val < 1.3 ? "#3a2500" : "#0d3b15";
+      html += `<div class="heatmap-cell" style="background:${bg};color:${fg}">${display}</div>`;
+    }
+  }
+
+  grid.innerHTML = html;
+}
+
+function heatColor(val) {
+  // 0 = red, 1 = amber, 2 = green, interpolated
+  const clamped = Math.max(0, Math.min(2, val));
+  if (clamped <= 1) {
+    const t = clamped;
+    return lerpColor([193, 61, 54], [216, 135, 16], t);
+  } else {
+    const t = clamped - 1;
+    return lerpColor([216, 135, 16], [31, 157, 85], t);
+  }
+}
+
+function lerpColor(a, b, t) {
+  const r = Math.round(a[0] + (b[0] - a[0]) * t);
+  const g = Math.round(a[1] + (b[1] - a[1]) * t);
+  const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+  return `rgb(${r},${g},${bl})`;
+}
+
+/* ── Pairwise ── */
+function renderPairwise(pairs) {
+  if (!pairs || !pairs.length) {
+    document.getElementById("pairwise-list").innerHTML =
+      `<div class="empty-state">No pairwise comparison data</div>`;
+    return;
+  }
+
+  let html = "";
+  for (const p of pairs) {
+    const total = p.total || 1;
+    const aPct = (p.a_wins / total * 100).toFixed(1);
+    const tiePct = (p.ties / total * 100).toFixed(1);
+    const bPct = (p.b_wins / total * 100).toFixed(1);
+
+    html += `
+    <details class="pair-card">
+      <summary>
+        <div class="pair-header" style="width:100%">
+          <div>
+            <span class="pair-title">${esc(p.version_a)} vs ${esc(p.version_b)}</span>
+          </div>
+          <div class="pair-stats">
+            <span><strong>${p.a_wins}</strong> ${esc(p.version_a)} wins</span>
+            <span><strong>${p.ties}</strong> ties</span>
+            <span><strong>${p.b_wins}</strong> ${esc(p.version_b)} wins</span>
+          </div>
+        </div>
+      </summary>
+      <div>
+        <div class="win-bar-wrap">
+          <div class="win-seg a" style="width:${aPct}%">${p.a_wins ? p.a_wins : ""}</div>
+          <div class="win-seg tie" style="width:${tiePct}%">${p.ties ? p.ties : ""}</div>
+          <div class="win-seg b" style="width:${bPct}%">${p.b_wins ? p.b_wins : ""}</div>
+        </div>
+        <div class="cmp-detail-list" id="cmp-detail-${esc(p.pair.replace(/\s/g, "_"))}">
+          <div class="loading" style="font-size:0.82rem">Click to load per-text details</div>
+        </div>
+      </div>
+    </details>`;
+  }
+
+  document.getElementById("pairwise-list").innerHTML = html;
+
+  /* Load detail data on first expand */
+  document.querySelectorAll(".pair-card").forEach(det => {
+    det.addEventListener("toggle", async function handler() {
+      if (!det.open) return;
+      det.removeEventListener("toggle", handler);
+      await loadComparisonDetails();
+      const pair = det.querySelector(".pair-title").textContent;
+      renderPairDetail(pair);
+    });
+  });
+}
+
+async function loadComparisonDetails() {
+  if (comparisonsData) return;
+  try {
+    const dir = manifest.comparisons_dir || "comparisons";
+    comparisonsData = await fetchJSONL(`${BASE}/${dir}/comparisons.jsonl`);
+  } catch (e) {
+    comparisonsData = [];
+    console.warn("Could not load comparisons.jsonl:", e);
+  }
+}
+
+function renderPairDetail(pairLabel) {
+  const va = pairLabel.split(" vs ")[0];
+  const vb = pairLabel.split(" vs ")[1];
+  const items = (comparisonsData || []).filter(c =>
+    (c.version_a === va && c.version_b === vb) ||
+    (c.version_a === vb && c.version_b === va)
+  );
+
+  const containerId = `cmp-detail-${pairLabel.replace(/\s/g, "_")}`;
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  if (!items.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:12px">No per-text data found</div>`;
+    return;
+  }
+
+  let html = "";
+  for (const c of items) {
+    const wClass = c.winner_normalized === c.version_a ? "a"
+      : c.winner_normalized === c.version_b ? "b" : "tie";
+    const wLabel = c.winner_normalized === "tie" ? "Tie"
+      : c.winner_normalized || c.winner_raw || "?";
+
+    html += `<div class="cmp-item">
+      <div class="cmp-meta">
+        <span class="cmp-winner ${wClass}">${esc(wLabel)}</span>
+        <span style="color:var(--muted);font-size:0.8rem">${esc(c.text_id || "")} &middot; ${esc(c.reasoning_type || "")}</span>
+      </div>
+      <div style="color:#3a4944;font-size:0.82rem;line-height:1.45">${esc(c.justification || "")}</div>
+    </div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+/* ── Grades / Where Points Were Lost ── */
+async function loadGrades() {
+  try {
+    const dir = manifest.grades_dir || "grades";
+    gradesData = await fetchJSONL(`${BASE}/${dir}/grades.jsonl`);
+  } catch (e) {
+    document.getElementById("grade-list").innerHTML =
+      `<div class="empty-state">Could not load grades.jsonl: ${esc(e.message)}</div>`;
+    return;
+  }
+
+  renderGradeFilters();
+  renderGrades();
+}
+
+function renderGradeFilters() {
+  const lost = gradesData.filter(g => g.judge_score < 2 && g.status === "ok");
+  const versions = [...new Set(lost.map(g => g.version_id))].sort();
+  const types = [...new Set(lost.map(g => g.reasoning_type))].sort();
+  const scores = [...new Set(lost.map(g => g.judge_score))].sort();
+
+  let html = `
+    <select id="gf-version" onchange="renderGrades()">
+      <option value="">All versions</option>
+      ${versions.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("")}
+    </select>
+    <select id="gf-type" onchange="renderGrades()">
+      <option value="">All types</option>
+      ${types.map(t => `<option value="${esc(t)}">${esc(t.replace(/_/g, " "))}</option>`).join("")}
+    </select>
+    <select id="gf-score" onchange="renderGrades()">
+      <option value="">All scores &lt; 2</option>
+      ${scores.map(s => `<option value="${s}">Score ${s}</option>`).join("")}
+    </select>
+  `;
+  document.getElementById("grade-filters").innerHTML = html;
+}
+
+function renderGrades() {
+  const vf = document.getElementById("gf-version")?.value || "";
+  const tf = document.getElementById("gf-type")?.value || "";
+  const sf = document.getElementById("gf-score")?.value || "";
+
+  let rows = gradesData.filter(g => g.judge_score < 2 && g.status === "ok");
+  if (vf) rows = rows.filter(g => g.version_id === vf);
+  if (tf) rows = rows.filter(g => g.reasoning_type === tf);
+  if (sf !== "") rows = rows.filter(g => String(g.judge_score) === sf);
+
+  if (!rows.length) {
+    document.getElementById("grade-list").innerHTML =
+      rows.length === 0 && !vf && !tf && !sf
+        ? `<div class="empty-state">All formalizations scored 2 (interrogation-ready). No points lost!</div>`
+        : `<div class="empty-state">No matching results</div>`;
+    return;
+  }
+
+  rows.sort((a, b) => a.judge_score - b.judge_score || a.version_id.localeCompare(b.version_id));
+
+  let html = "";
+  for (const g of rows) {
+    html += `
+    <details class="grade-card">
+      <summary>
+        <span class="score-badge s${g.judge_score}">${g.judge_score}</span>
+        <span class="version-tag">${esc(g.version_id)}</span>
+        <span class="type-tag">${esc((g.reasoning_type || "").replace(/_/g, " "))}</span>
+        <span class="diff-tag">${esc(g.difficulty || "")}</span>
+        <span style="flex:1"></span>
+        <span style="color:var(--muted);font-size:0.8rem">${esc(g.text_id || "")}</span>
+      </summary>
+      <div class="grade-detail">
+        <h4>Text</h4>
+        <div class="justification">${esc(g.text || "")}</div>
+        <h4>Justification</h4>
+        <div class="justification">${esc(g.judge_justification || "")}</div>
+        <h4>Formalization</h4>
+        <div class="formalization-text">${esc(g.formalization || "")}</div>
+      </div>
+    </details>`;
+  }
+
+  document.getElementById("grade-list").innerHTML = html;
+}
+
+/* ── Init ── */
+boot();
+</script>
+</body>
+</html>
