@@ -960,9 +960,21 @@ def run_compare(args: argparse.Namespace) -> int:
             })
 
     total = len(tasks)
-    print(f"Comparing: {total} tasks across {len(pairs)} pairs", flush=True)
+    parallelism = (
+        args.parallelism
+        or compare_cfg.get("parallelism")
+        or config.get("collect", {}).get("parallelism", 1)
+    )
+    print(
+        f"Comparing: {total} tasks across {len(pairs)} pairs "
+        f"(parallelism={parallelism})",
+        flush=True,
+    )
 
-    for i, task in enumerate(tasks, 1):
+    io_lock = threading.Lock()
+    completed = 0
+
+    def _process_compare(task: dict[str, Any]) -> dict[str, Any]:
         # Randomize presentation order
         coin = random.random() < 0.5
         if coin:
@@ -1036,20 +1048,41 @@ def run_compare(args: argparse.Namespace) -> int:
             result["error"] = str(exc)
 
         result["status"] = "error" if result.get("error") else "ok"
-        append_jsonl(partial_path, result)
+        return result
 
-        status = result["status"]
-        winner = result.get("winner_normalized", "?")
-        print(
-            f"[compare {i}/{total}] {status} "
-            f"{task['version_a']} vs {task['version_b']} "
-            f"text={task['text_id']} winner={winner}",
-            flush=True,
-        )
+    with concurrent.futures.ThreadPoolExecutor(
+        max_workers=max(1, parallelism)
+    ) as executor:
+        futures = {
+            executor.submit(_process_compare, task): task
+            for task in tasks
+        }
+        for future in concurrent.futures.as_completed(futures):
+            task = futures[future]
+            result = future.result()
+            with io_lock:
+                completed += 1
+                append_jsonl(partial_path, result)
+                status = result["status"]
+                winner = result.get("winner_normalized", "?")
+                error_suffix = (
+                    f" error={result['error']}" if status == "error" else ""
+                )
+                print(
+                    f"[compare {completed}/{total}] {status} "
+                    f"{task['version_a']} vs {task['version_b']} "
+                    f"text={task['text_id']} winner={winner}{error_suffix}",
+                    flush=True,
+                )
 
     all_comparisons: list[dict[str, Any]] = []
     if partial_path.exists():
         all_comparisons = read_jsonl(partial_path)
+    all_comparisons.sort(key=lambda r: (
+        str(r.get("version_a", "")),
+        str(r.get("version_b", "")),
+        str(r.get("text_id", "")),
+    ))
     write_jsonl(final_path, all_comparisons)
 
     summary = summarize_comparisons(all_comparisons)
@@ -1346,6 +1379,8 @@ def parse_args() -> argparse.Namespace:
     compare.add_argument("--pair", default="",
                          help="Single pair to compare: 'version_a,version_b'.")
     compare.add_argument("--compare-id", default="")
+    compare.add_argument("--parallelism", type=int, default=0,
+                         help="Max concurrent compare tasks (default from config).")
     compare.add_argument("--dry-run", action="store_true")
     compare.add_argument("--fail-on-error", action="store_true", default=True)
     compare.add_argument("--no-fail-on-error", dest="fail_on_error",

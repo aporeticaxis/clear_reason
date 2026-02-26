@@ -7,7 +7,7 @@
     "type_filter": null,
     "include_preamble_test": true,
     "num_runs": 1,
-    "parallelism": 8,
+    "parallelism": 5,
     "timeout_seconds": 300
   },
   "grade": {
@@ -15,6 +15,7 @@
     "timeout_seconds": 300
   },
   "compare": {
+    "parallelism": 5,
     "pairs": [
       ["v3_2026", "no_prompt"],
       ["v3_2026", "v1_core"],

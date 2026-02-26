@@ -1,6 +1,6 @@
 {
   "benchmark": "clear-reason-bullshit-detection",
-  "version": "2.0",
+  "version": "2.1",
   "quality_criterion": "socratic_test",
   "reasoning_types": [
     {
@@ -148,8 +148,8 @@
         {
           "id": "fg_01",
           "difficulty": "nonsense",
-          "text": "What tolerance range in millicultures should we set for cultural drift during the post-acquisition integration, and at what drift rate should we trigger a recalibration sprint?",
-          "good_formalization_indicators": "'Millicultures' isn't a unit — culture isn't a measurable parameter with specifiable tolerances, drift rates, or recalibration thresholds. This applies manufacturing precision (tolerance ranges, drift limits, calibration intervals) to something that has no metric, no unit, and no instrument",
+          "text": "What tolerance range in millisynergies should we set for alignment drift during the post-merger integration, and at what drift rate should we trigger a recalibration sprint?",
+          "good_formalization_indicators": "'Millisynergies' isn't a unit — organizational alignment isn't a measurable parameter with specifiable tolerances, drift rates, or recalibration thresholds. This applies manufacturing precision (tolerance ranges, drift limits, calibration intervals) to something that has no metric, no unit, and no instrument",
           "failure_modes": [],
           "key_prompt_sections": [],
           "notes": "manufacturing × M&A"
