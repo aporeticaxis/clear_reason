@@ -22,8 +22,15 @@ Empirical evaluation of Clear Reason formalization quality across prompt version
 - 5 categories: `lb_intro`, `lb_symbolization`, `lb_semantics`, `lb_pred_symbol`, `lb_pred_semantics`
 - Includes metadata such as symbolization keys (when available), good-formalization indicators, and failure modes
 
+### Bullshit detection corpus (`test_corpus_bullshit.json`)
+
+**55 nonsense questions** across 10 techniques, derived from the
+[Bullshit Benchmark](https://github.com/petergpt/bullshit-benchmark).
+Tests whether formalization surfaces structural nonsense rather than
+engaging with it at face value.
+
 Runtime note:
-- The suite executes directly from `test_corpus.json` and `test_corpus_logic_book.json`.
+- The suite executes directly from `test_corpus.json`, `test_corpus_logic_book.json`, and `test_corpus_bullshit.json`.
 - Intermediate extraction artifacts (`logic_book_exercises/`, OCR/PDF refs, conversion helpers) are not required for running the benchmark.
 
 ## Requirements
@@ -78,6 +85,16 @@ python3 scripts/clear_reason_eval.py compare \
 python3 scripts/clear_reason_eval.py aggregate --run-dir runs/lb_smoke
 ```
 
+### Bullshit detection smoke
+
+```bash
+python3 scripts/clear_reason_eval.py collect \
+  --corpus test_corpus_bullshit.json \
+  --version-filter "v3_2026,no_prompt" \
+  --type-filter "cross_domain_concept_stitching" \
+  --limit 3
+```
+
 ## Dashboard
 
 Serve the repo root and open the Clear Reason viewer:
@@ -105,6 +122,7 @@ config.json
 prompt_versions.json
 test_corpus.json
 test_corpus_logic_book.json
+test_corpus_bullshit.json
 prompts/
 scripts/clear_reason_eval.py
 scripts/ablate.py
