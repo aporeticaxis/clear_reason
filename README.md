@@ -134,8 +134,7 @@ index.html
 
 ## Legal and Provenance
 
-- `test_corpus_logic_book.json` is derived from *The Logic Book* source material and adaptation work done in this fork.
-- Public publication of that derived corpus is an explicit project decision and accepted repository risk.
+- `test_corpus_logic_book.json` contains exercises adapted from *The Logic Book* (6th ed.). This is a derivative work.
 
 ## Legacy Fork Note
 
