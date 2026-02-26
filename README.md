@@ -139,4 +139,4 @@ index.html
 
 ## Legacy Fork Note
 
-This repo originated as a fork of [petergpt/bullshit-benchmark](https://github.com/petergpt/bullshit-benchmark). Legacy benchmark tooling and schemas are not part of the Clear Reason mainline workflow.
+The bullshit detection test corpus (`test_corpus_bullshit.json`) originated as a fork of [petergpt/bullshit-benchmark](https://github.com/petergpt/bullshit-benchmark).
