@@ -109,6 +109,27 @@ python3 scripts/clear_reason_eval.py collect \
   --progress-file runs/my_run/progress.json
 ```
 
+### Granular stratification (post-hoc)
+
+Use stratification when coarse 0/1/2 averages look tied (or nearly tied) but
+pairwise outcomes still show separation.
+
+```bash
+python3 scripts/stratify_run.py --run-dir runs/my_run --anchor v3_2026
+```
+
+Outputs:
+- `runs/<run_id>/stratified/stratified_summary.json`
+- `runs/<run_id>/stratified/stratified_leaderboard.csv`
+
+What it adds beyond coarse grade averages:
+- Bradley-Terry continuous strength scores from pairwise data
+- per-type pairwise win rates and per-type grade deltas
+- grade-vs-pairwise divergence analysis (ceiling-effect detector)
+
+Convenience wrapper:
+- `scripts/eval_prompt_vs_ref.sh` runs collect/grade/compare/aggregate and then stratification in one command.
+
 ## Dashboard
 
 Serve the repo root and open the Clear Reason viewer:
@@ -128,6 +149,7 @@ Behavior:
 - Without `?run=...`: dashboard shows a guidance empty state.
 - With `?run=<run_id>`: dashboard loads run artifacts from `runs/<run_id>/`.
 - Pairwise detail can expand to show side-by-side formalizations (joined from `formalizations.jsonl` by `version_id` + `text_id`).
+- Stratified outputs (`runs/<run_id>/stratified/*`) are currently CLI/file artifacts and are not yet rendered in the dashboard UI.
 
 Comparative graph panel includes:
 - Stacked score composition by version (`score_0 / score_1 / score_2` share).
@@ -153,6 +175,8 @@ Expected run artifacts:
 - `runs/<run_id>/aggregate/aggregate_summary.json`
 - `runs/<run_id>/grades/<timestamp>_.../grades.jsonl`
 - `runs/<run_id>/comparisons/<timestamp>/comparisons.jsonl`
+- `runs/<run_id>/stratified/stratified_summary.json` (if `scripts/stratify_run.py` was run)
+- `runs/<run_id>/stratified/stratified_leaderboard.csv` (if `scripts/stratify_run.py` was run)
 
 ## Main Files
 
