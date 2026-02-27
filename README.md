@@ -48,6 +48,12 @@ All model calls use `claude -p` (subscription-backed CLI usage, no API key requi
 ./scripts/run_end_to_end.sh --run-id my_run
 ```
 
+Live progress for that run is written to:
+
+```text
+runs/my_run/progress.json
+```
+
 ### Dry run (no model calls)
 
 ```bash
@@ -95,6 +101,14 @@ python3 scripts/clear_reason_eval.py collect \
   --limit 3
 ```
 
+### Direct subcommands with progress output
+
+```bash
+python3 scripts/clear_reason_eval.py collect \
+  --run-id my_run \
+  --progress-file runs/my_run/progress.json
+```
+
 ## Dashboard
 
 Serve the repo root and open the Clear Reason viewer:
@@ -104,13 +118,38 @@ python3 -m http.server 8000
 # http://localhost:8000/viewer/clear_reason.html?run=<run_id>
 ```
 
+For live phase progress while scripts are running:
+
+```text
+http://localhost:8000/viewer/progress.html?run=<run_id>
+```
+
 Behavior:
 - Without `?run=...`: dashboard shows a guidance empty state.
 - With `?run=<run_id>`: dashboard loads run artifacts from `runs/<run_id>/`.
+- Pairwise detail can expand to show side-by-side formalizations (joined from `formalizations.jsonl` by `version_id` + `text_id`).
+
+Comparative graph panel includes:
+- Stacked score composition by version (`score_0 / score_1 / score_2` share).
+- Pairwise win-rate matrix (row version win-rate against each opponent).
+- Delta-vs-baseline grid for:
+  - average score delta
+  - interrogation-ready rate delta
+  - pairwise win-edge delta
+
+Baseline selector behavior:
+- Baseline options are built dynamically from versions present in the run.
+- Preferred baseline is `no_prompt` when available.
+- If `no_prompt` is absent, the dashboard falls back to another available version (deterministic selection) and labels the state accordingly.
+
+Cross-benchmark caveat:
+- Compare normalized deltas within the same benchmark cohort.
+- Avoid absolute raw-score comparisons across different benchmark families (for example naturalistic vs logic-book vs bullshit-detection) because score scales and task distributions differ.
 
 Expected run artifacts:
 - `runs/<run_id>/collect_meta.json`
 - `runs/<run_id>/run_manifest.json`
+- `runs/<run_id>/progress.json`
 - `runs/<run_id>/aggregate/aggregate_summary.json`
 - `runs/<run_id>/grades/<timestamp>_.../grades.jsonl`
 - `runs/<run_id>/comparisons/<timestamp>/comparisons.jsonl`

@@ -16,6 +16,7 @@ Options:
   --config <path>         Config file (default: config.json)
   --output-dir <dir>      Output base dir (default: runs)
   --run-id <id>           Explicit run id (default: auto timestamp)
+  --progress-file <path>  Live progress JSON file (default: runs/<run_id>/progress.json)
   --version-filter <csv>  Comma-separated version IDs to include
   --type-filter <csv>     Comma-separated reasoning type IDs to include
   --dry-run               Skip claude calls, use placeholders
@@ -31,6 +32,7 @@ cd "${ROOT_DIR}"
 CONFIG_PATH="config.json"
 OUTPUT_DIR="runs"
 RUN_ID=""
+PROGRESS_FILE=""
 VERSION_FILTER=""
 TYPE_FILTER=""
 DRY_RUN=0
@@ -42,6 +44,7 @@ while [[ $# -gt 0 ]]; do
     --config)       CONFIG_PATH="${2:-}"; shift 2 ;;
     --output-dir)   OUTPUT_DIR="${2:-}"; shift 2 ;;
     --run-id)       RUN_ID="${2:-}"; shift 2 ;;
+    --progress-file) PROGRESS_FILE="${2:-}"; shift 2 ;;
     --version-filter) VERSION_FILTER="${2:-}"; shift 2 ;;
     --type-filter)  TYPE_FILTER="${2:-}"; shift 2 ;;
     --dry-run)      DRY_RUN=1; shift ;;
@@ -69,12 +72,16 @@ fi
 
 RUN_DIR="${OUTPUT_DIR}/${RUN_ID}"
 RESPONSES_FILE="${RUN_DIR}/formalizations.jsonl"
+if [[ -z "${PROGRESS_FILE}" ]]; then
+  PROGRESS_FILE="${RUN_DIR}/progress.json"
+fi
 
 # Build common flags
 COMMON_FLAGS=(--config "${CONFIG_PATH}")
 if [[ "${DRY_RUN}" -eq 1 ]]; then
   COMMON_FLAGS+=(--dry-run)
 fi
+COMMON_FLAGS+=(--progress-file "${PROGRESS_FILE}")
 
 # --- Phase 1: Collect ---
 if [[ "${GRADE_ONLY}" -eq 0 ]]; then
@@ -119,9 +126,11 @@ echo ""
 echo "==> Phase 4: Aggregate"
 python3 scripts/clear_reason_eval.py aggregate \
   --config "${CONFIG_PATH}" \
-  --run-dir "${RUN_DIR}"
+  --run-dir "${RUN_DIR}" \
+  --progress-file "${PROGRESS_FILE}"
 
 echo ""
 echo "Pipeline complete."
 echo "Run ID: ${RUN_ID}"
 echo "Run dir: ${RUN_DIR}"
+echo "Progress file: ${PROGRESS_FILE}"

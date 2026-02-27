@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clear Reason Live Progress</title>
+  <style>
+    :root {
+      --bg: #f5f7f3;
+      --panel: #ffffff;
+      --line: #d8dfd9;
+      --ink: #1e2522;
+      --muted: #5e6f68;
+      --teal: #0b746a;
+      --teal-soft: #d9f0ec;
+      --amber: #b67612;
+      --red: #b3332d;
+      --shadow: 0 10px 28px rgba(20, 35, 30, 0.1);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1000px 580px at 102% -50%, #d3e9e3 0%, transparent 72%),
+        radial-gradient(900px 520px at -20% 15%, #f1ead4 0%, transparent 70%),
+        var(--bg);
+    }
+
+    .page {
+      width: min(1100px, 95vw);
+      margin: 28px auto 40px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f332f 0%, #16574f 72%, #177067 100%);
+      color: #edf9f6;
+      border-radius: 18px;
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-family: "Rockwell", "Georgia", serif;
+    }
+    .hero p {
+      margin: 7px 0 12px;
+      color: #cde8e2;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    input, button, a.btn {
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      padding: 8px 11px;
+      font-size: 0.88rem;
+    }
+    input {
+      min-width: min(420px, 80vw);
+      background: rgba(255, 255, 255, 0.08);
+      color: #eff7f5;
+      outline: none;
+    }
+    input::placeholder { color: #c7dfda; }
+    button, a.btn {
+      background: rgba(255, 255, 255, 0.13);
+      color: #eff7f5;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    button:hover, a.btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .meta-item {
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 9px 10px;
+      background: #fbfcfb;
+    }
+    .meta-item .k { font-size: 0.76rem; color: var(--muted); }
+    .meta-item .v { margin-top: 4px; font-weight: 700; font-size: 1rem; }
+
+    .phase-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .phase-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 11px;
+      background: #ffffff;
+    }
+    .phase-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .phase-name {
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .phase-stat { font-size: 0.84rem; color: var(--muted); }
+
+    .bar-wrap {
+      margin-top: 8px;
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid #cfd9d2;
+      background: #edf2ef;
+    }
+    .bar {
+      height: 100%;
+      width: 0;
+      transition: width 200ms ease;
+      background: linear-gradient(90deg, #128276 0%, #1da18f 100%);
+    }
+    .bar.error {
+      background: linear-gradient(90deg, #b13f38 0%, #d65b54 100%);
+    }
+    .phase-msg {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: #40524b;
+      min-height: 1.1em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .phase-foot {
+      margin-top: 6px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      color: #60726b;
+    }
+
+    .muted { color: var(--muted); font-size: 0.86rem; }
+
+    @media (max-width: 920px) {
+      .meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      input { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>Live Progress</h1>
+      <p>Real-time progress for benchmark phases while scripts run.</p>
+      <div class="controls">
+        <input id="run-input" type="text" placeholder="run id, e.g. run_20260226_190500">
+        <button id="load-btn" type="button">Load</button>
+        <a id="results-link" class="btn" href="clear_reason.html" target="_blank" rel="noopener">Open Results</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="meta">
+        <div class="meta-item">
+          <div class="k">Pipeline</div>
+          <div id="pipeline-status" class="v">pending</div>
+        </div>
+        <div class="meta-item">
+          <div class="k">Run ID</div>
+          <div id="run-id" class="v">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="k">Active Phase</div>
+          <div id="active-phase" class="v">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="k">Last Update</div>
+          <div id="updated-at" class="v">-</div>
+        </div>
+      </div>
+
+      <div id="phase-grid" class="phase-grid"></div>
+      <p id="status-note" class="muted">Waiting for run selection.</p>
+    </section>
+  </div>
+
+  <script>
+    const PHASES = ["collect", "grade", "compare", "aggregate"];
+    const POLL_MS = 1000;
+
+    const runInput = document.getElementById("run-input");
+    const loadBtn = document.getElementById("load-btn");
+    const resultsLink = document.getElementById("results-link");
+    const pipelineStatusEl = document.getElementById("pipeline-status");
+    const runIdEl = document.getElementById("run-id");
+    const activePhaseEl = document.getElementById("active-phase");
+    const updatedAtEl = document.getElementById("updated-at");
+    const phaseGridEl = document.getElementById("phase-grid");
+    const statusNoteEl = document.getElementById("status-note");
+
+    let currentRunId = "";
+    let timerHandle = null;
+
+    function fmtSeconds(value) {
+      if (typeof value !== "number" || !Number.isFinite(value)) return "-";
+      const sec = Math.max(0, Math.round(value));
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      if (h > 0) return `${h}h ${m}m ${s}s`;
+      if (m > 0) return `${m}m ${s}s`;
+      return `${s}s`;
+    }
+
+    function fmtStamp(iso) {
+      if (!iso) return "-";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return iso;
+      return d.toLocaleString();
+    }
+
+    function toTitle(text) {
+      return String(text || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    }
+
+    function progressUrl(runId) {
+      const encoded = encodeURIComponent(runId);
+      return `../runs/${encoded}/progress.json?t=${Date.now()}`;
+    }
+
+    function renderPhases(phases) {
+      phaseGridEl.innerHTML = "";
+      for (const phase of PHASES) {
+        const p = phases && phases[phase] ? phases[phase] : {};
+        const status = String(p.status || "pending");
+        const total = Number(p.total || 0);
+        const completed = Number(p.completed || 0);
+        const pct = Number.isFinite(Number(p.percent)) ? Number(p.percent) : (total > 0 ? (completed / total) * 100 : 0);
+        const pctSafe = Math.max(0, Math.min(100, pct));
+
+        const card = document.createElement("div");
+        card.className = "phase-card";
+        card.innerHTML = `
+          <div class="phase-head">
+            <div class="phase-name">${toTitle(phase)}</div>
+            <div class="phase-stat">${status} · ${completed}/${total} · ${pctSafe.toFixed(1)}%</div>
+          </div>
+          <div class="bar-wrap"><div class="bar${status === "error" ? " error" : ""}" style="width:${pctSafe}%"></div></div>
+          <div class="phase-msg">${p.message ? p.message : "&nbsp;"}</div>
+          <div class="phase-foot">
+            <span>errors: ${Number(p.errors || 0)}</span>
+            <span>throughput/min: ${p.throughput_per_min ?? "-"}</span>
+            <span>elapsed: ${fmtSeconds(p.elapsed_seconds)}</span>
+            <span>eta: ${fmtSeconds(p.eta_seconds)}</span>
+          </div>
+        `;
+        phaseGridEl.appendChild(card);
+      }
+    }
+
+    function renderState(state) {
+      pipelineStatusEl.textContent = state.pipeline_status || "pending";
+      runIdEl.textContent = state.run_id || currentRunId || "-";
+      activePhaseEl.textContent = state.active_phase || "-";
+      updatedAtEl.textContent = fmtStamp(state.updated_at_utc);
+      renderPhases(state.phases || {});
+    }
+
+    async function fetchProgress() {
+      if (!currentRunId) return;
+      try {
+        const res = await fetch(progressUrl(currentRunId), { cache: "no-store" });
+        if (!res.ok) {
+          statusNoteEl.textContent = `Waiting for progress file: runs/${currentRunId}/progress.json`;
+          return;
+        }
+        const payload = await res.json();
+        statusNoteEl.textContent = `Polling every ${POLL_MS / 1000}s`;
+        renderState(payload);
+      } catch (err) {
+        statusNoteEl.textContent = `Progress fetch failed: ${err}`;
+      }
+    }
+
+    function setRun(runId) {
+      currentRunId = (runId || "").trim();
+      if (!currentRunId) return;
+      const params = new URLSearchParams(window.location.search);
+      params.set("run", currentRunId);
+      window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
+      resultsLink.href = `clear_reason.html?run=${encodeURIComponent(currentRunId)}`;
+      runInput.value = currentRunId;
+      fetchProgress();
+    }
+
+    async function inferLatestRun() {
+      try {
+        const res = await fetch("../runs/", { cache: "no-store" });
+        if (!res.ok) return "";
+        const html = await res.text();
+        const matches = [...html.matchAll(/href="(run_[0-9_]+)\/"/g)].map((m) => m[1]);
+        if (matches.length === 0) return "";
+        matches.sort();
+        return matches[matches.length - 1];
+      } catch {
+        return "";
+      }
+    }
+
+    async function boot() {
+      const params = new URLSearchParams(window.location.search);
+      const runFromQuery = params.get("run") || "";
+      const latest = runFromQuery || await inferLatestRun();
+      if (latest) {
+        setRun(latest);
+      } else {
+        statusNoteEl.textContent = "No run selected. Enter a run id to start polling.";
+      }
+      timerHandle = window.setInterval(fetchProgress, POLL_MS);
+    }
+
+    loadBtn.addEventListener("click", () => setRun(runInput.value));
+    runInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") setRun(runInput.value);
+    });
+    boot();
+  </script>
+</body>
+</html>

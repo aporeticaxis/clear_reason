@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,19 +20,28 @@
       --deep-red: #8a1f1a;
       --error: #4a5350;
       --shadow: 0 10px 30px rgba(20, 35, 30, 0.08);
-      --radius: 14px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-pill: 999px;
+      --focus-ring: 0 0 0 2px #fff, 0 0 0 4px rgba(15, 118, 110, 0.55);
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    html, body {
-      margin: 0; padding: 0; min-height: 100%;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
       color: var(--ink);
       background:
         radial-gradient(1200px 700px at 100% -50%, #d9efe9 0%, transparent 70%),
         radial-gradient(1000px 600px at -10% 10%, #f6ecd8 0%, transparent 70%),
         var(--bg);
-      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+      font-family: "Avenir Next", system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 
     .page {
@@ -43,102 +53,194 @@
     }
 
     @keyframes fade-up {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* --- Hero --- */
     .hero {
       background: linear-gradient(132deg, #113630 0%, #1b5f55 60%, #1d7268 100%);
       color: #f2faf8;
-      border-radius: 18px;
+      border-radius: var(--radius-lg);
       padding: 22px 24px;
       box-shadow: var(--shadow);
     }
+
     .hero h1 {
       margin: 0;
       font-family: "Rockwell", "Georgia", serif;
       letter-spacing: 0.2px;
       font-size: clamp(1.5rem, 2.5vw, 2.2rem);
     }
-    .hero-subtitle { margin: 8px 0 0; color: #cde9e3; max-width: 920px; }
-    .hero-row {
-      display: flex; align-items: center; gap: 14px;
-      flex-wrap: wrap; margin-top: 12px;
+
+    .hero-subtitle {
+      margin: 8px 0 0;
+      color: #cde9e3;
+      max-width: 920px;
     }
+
+    .hero-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
     .hero select {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       color: #e6f4f1;
-      border-radius: 10px;
-      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      min-height: 36px;
       font-size: 0.84rem;
       outline: none;
     }
-    .hero select option { background: #1b5f55; color: #fff; }
-    .hero-meta {
-      font-size: 0.82rem; color: #a8d5cc;
-      display: flex; gap: 16px; flex-wrap: wrap;
+
+    .hero select:focus {
+      border-color: rgba(255, 255, 255, 0.85);
+      box-shadow: var(--focus-ring);
     }
+
+    .hero select option {
+      background: #1b5f55;
+      color: #fff;
+    }
+
+    .hero-meta {
+      font-size: 0.82rem;
+      color: #a8d5cc;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
     .hero-link {
-      border: 1px solid rgba(255,255,255,0.5);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       color: #e6f4f1;
-      background: rgba(255,255,255,0.06);
-      border-radius: 10px;
-      padding: 7px 11px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      min-height: 36px;
       font-size: 0.84rem;
       text-decoration: none;
-      display: inline-flex; align-items: center; gap: 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
-    .hero-link:hover { background: rgba(255,255,255,0.14); }
+
+    .hero-link:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
 
     /* --- Panels --- */
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
-      padding: 16px;
+      padding: 22px;
       animation: fade-up 550ms ease both;
     }
+
     .panel h2 {
       margin: 0 0 12px;
       font-size: 1.15rem;
       font-family: "Rockwell", "Georgia", serif;
     }
-    .panel h3 { margin: 0 0 8px; font-size: 1rem; }
-    .subtle { margin: 0; color: var(--muted); font-size: 0.92rem; }
+
+    .panel h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .subtle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
 
     /* --- KPIs --- */
     .kpis {
-      display: grid; gap: 10px;
+      display: grid;
+      gap: 10px;
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
+
     .kpi {
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       padding: 10px;
       background: #fff;
     }
-    .kpi .label { font-size: 0.79rem; color: var(--muted); margin-bottom: 4px; }
-    .kpi .value { font-size: 1.35rem; font-weight: 700; letter-spacing: 0.1px; }
-    .kpi .hint { font-size: 0.77rem; color: #667a74; margin-top: 2px; }
-    .kpi.green .value { color: var(--green); }
-    .kpi.teal .value  { color: var(--teal); }
-    .kpi.amber .value { color: var(--amber); }
-    .kpi.red .value   { color: var(--red); }
+
+    .kpi .label {
+      font-size: 0.79rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .kpi .value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+    }
+
+    .kpi .hint {
+      font-size: 0.77rem;
+      color: #667a74;
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+    }
+
+    .kpi.green .value {
+      color: var(--green);
+    }
+
+    .kpi.teal .value {
+      color: var(--teal);
+    }
+
+    .kpi.amber .value {
+      color: var(--amber);
+    }
+
+    .kpi.red .value {
+      color: var(--red);
+    }
 
     /* --- Leaderboard Table --- */
     .table-wrap {
       overflow-x: auto;
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
     }
+
     table {
-      width: 100%; border-collapse: collapse;
+      width: 100%;
+      border-collapse: collapse;
       font-size: 0.88rem;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
     }
-    th, td { padding: 9px 12px; text-align: left; }
+
+    th,
+    td {
+      padding: 9px 12px;
+      text-align: left;
+    }
+
     th {
       background: #f4f7f5;
       color: var(--muted);
@@ -151,55 +253,141 @@
       white-space: nowrap;
       border-bottom: 2px solid var(--line);
     }
-    th:hover { color: var(--teal); }
-    th .sort-arrow { margin-left: 4px; font-size: 0.7rem; }
-    td { border-bottom: 1px solid #edf1ef; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #f9fcfb; }
-    .rank-cell { font-weight: 700; color: var(--teal); width: 50px; }
-    .score-big {
-      font-weight: 700; font-size: 1.05rem;
+
+    th:hover {
+      color: var(--teal);
     }
-    .score-big.high { color: var(--green); }
-    .score-big.mid  { color: var(--amber); }
-    .score-big.low  { color: var(--red); }
+
+    th .sort-arrow {
+      margin-left: 4px;
+      font-size: 0.7rem;
+    }
+
+    td {
+      border-bottom: 1px solid #edf1ef;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f9fcfb;
+    }
+
+    .rank-cell {
+      font-weight: 700;
+      color: var(--teal);
+      width: 50px;
+    }
+
+    .score-big {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .score-big.high {
+      color: var(--green);
+    }
+
+    .score-big.mid {
+      color: var(--amber);
+    }
+
+    .score-big.low {
+      color: var(--red);
+    }
 
     /* Score distribution bar */
     .dist-bar {
-      display: flex; height: 20px; border-radius: 999px;
-      overflow: hidden; border: 1px solid #d1d9d4;
-      background: #f3f6f4; min-width: 120px;
+      display: flex;
+      height: 20px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      border: 1px solid #d1d9d4;
+      background: #f3f6f4;
+      min-width: 120px;
     }
-    .dist-seg { height: 100%; transition: width 280ms ease; }
-    .dist-seg.s0 { background: var(--red); }
-    .dist-seg.s1 { background: var(--amber); }
-    .dist-seg.s2 { background: var(--green); }
+
+    .dist-seg {
+      height: 100%;
+      transition: width 280ms ease;
+    }
+
+    .dist-seg.s0 {
+      background: var(--red);
+    }
+
+    .dist-seg.s1 {
+      background: var(--amber);
+    }
+
+    .dist-seg.s2 {
+      background: var(--green);
+    }
+
     .dist-legend {
-      display: flex; gap: 10px; font-size: 0.78rem;
-      color: var(--muted); margin-top: 6px;
+      display: flex;
+      gap: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 6px;
     }
-    .dist-legend span { display: inline-flex; align-items: center; gap: 4px; }
+
+    .dist-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     .dot {
-      width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
     }
-    .dot.s0 { background: var(--red); }
-    .dot.s1 { background: var(--amber); }
-    .dot.s2 { background: var(--green); }
+
+    .dot.s0 {
+      background: var(--red);
+    }
+
+    .dot.s1 {
+      background: var(--amber);
+    }
+
+    .dot.s2 {
+      background: var(--green);
+    }
 
     /* --- Heatmap --- */
     .heatmap-grid {
-      display: grid; gap: 2px;
+      display: grid;
+      gap: 2px;
       margin-top: 8px;
     }
+
     .heatmap-cell {
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       padding: 10px 8px;
       text-align: center;
       font-weight: 600;
       font-size: 0.92rem;
       transition: transform 120ms ease;
     }
-    .heatmap-cell:hover { transform: scale(1.04); }
+
+    .heatmap-cell:hover {
+      transform: scale(1.04);
+    }
+
+    .heatmap-cell.clickable {
+      cursor: pointer;
+      box-shadow: inset 0 0 0 1px rgba(18, 94, 82, 0.2);
+    }
+
+    .heatmap-cell.clickable:hover {
+      box-shadow: inset 0 0 0 2px rgba(18, 94, 82, 0.45);
+    }
+
     .heatmap-header {
       font-size: 0.76rem;
       color: var(--muted);
@@ -210,6 +398,7 @@
       text-align: center;
       background: transparent;
     }
+
     .heatmap-row-label {
       font-size: 0.84rem;
       font-weight: 600;
@@ -219,105 +408,409 @@
       align-items: center;
     }
 
+    .heatmap-status {
+      min-height: 1.1em;
+      margin-top: 10px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .heatmap-status.pending {
+      color: #0f5f55;
+    }
+
+    /* --- Graphs --- */
+    .graph-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-top: 10px;
+      align-items: start;
+    }
+
+    .graph-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      background: #fff;
+    }
+
+    .graph-card h3 {
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+      font-family: "Rockwell", "Georgia", serif;
+    }
+
+    .graph-card-wide {
+      grid-column: 1 / -1;
+    }
+
+    .graph-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .graph-card-head h3 {
+      margin: 0;
+    }
+
+    .baseline-control {
+      font-size: 0.8rem;
+      color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .baseline-control select {
+      border: 1px solid #bcc9c2;
+      border-radius: var(--radius-sm);
+      padding: 5px 8px;
+      font-size: 0.8rem;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .baseline-control select:focus {
+      border-color: #5aa495;
+      box-shadow: var(--focus-ring);
+    }
+
+    .chart-shell {
+      border: 1px solid #e7edeb;
+      border-radius: var(--radius-sm);
+      padding: 6px;
+      background: #fdfefd;
+      overflow-x: auto;
+    }
+
+    .chart-shell svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+
+    .chart-legend {
+      margin-top: 8px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .chart-legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chart-summary {
+      margin-top: 8px;
+      font-size: 0.82rem;
+    }
+
+    .baseline-caveat {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: #5c6b66;
+    }
+
     /* --- Pairwise --- */
     .pair-card {
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       padding: 12px;
       background: #fff;
       margin-bottom: 10px;
     }
+
+    .pair-card summary {
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .pair-card summary::-webkit-details-marker {
+      display: none;
+    }
+
     .pair-header {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .pair-title { font-weight: 700; font-size: 0.95rem; }
+
+    .pair-header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pair-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
     .pair-stats {
-      display: flex; gap: 14px; font-size: 0.84rem; color: var(--muted);
+      display: flex;
+      gap: 14px;
+      font-size: 0.84rem;
+      color: var(--muted);
     }
-    .pair-stats strong { color: var(--ink); }
+
+    .pair-stats strong {
+      color: var(--ink);
+    }
+
+    .pair-expand-indicator {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-pill);
+      border: 1px solid #bdd5cd;
+      background: #f7fbf9;
+      color: #47625a;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      transition: transform 180ms ease, background 180ms ease, color 180ms ease, border-color 180ms ease;
+      flex: 0 0 auto;
+    }
+
+    .pair-card summary:hover .pair-expand-indicator {
+      background: #eefaf6;
+      color: #0f5f55;
+      border-color: #9ecfc2;
+    }
+
+    .pair-card[open] .pair-expand-indicator {
+      transform: rotate(180deg);
+      background: #dff3ee;
+      color: #0f5f55;
+      border-color: #8fc5b7;
+    }
+
+    .pair-expand-hint {
+      margin: 4px 0 8px;
+      font-size: 0.8rem;
+      color: #60716b;
+    }
+
     .win-bar-wrap {
       margin-top: 8px;
-      display: flex; height: 24px; border-radius: 999px;
-      overflow: hidden; border: 1px solid #d1d9d4;
+      display: flex;
+      height: 24px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      border: 1px solid #d1d9d4;
     }
+
     .win-seg {
-      height: 100%; display: flex; align-items: center;
-      justify-content: center; font-size: 0.72rem;
-      font-weight: 600; color: #fff;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #fff;
       transition: width 280ms ease;
     }
-    .win-seg.a { background: var(--teal); }
-    .win-seg.tie { background: #a0b5ae; }
-    .win-seg.b { background: var(--amber); }
+
+    .win-seg.a {
+      background: var(--teal);
+    }
+
+    .win-seg.tie {
+      background: #a0b5ae;
+    }
+
+    .win-seg.b {
+      background: var(--amber);
+    }
+
+    .summary-win-bar {
+      margin-top: 7px;
+      display: flex;
+      height: 8px;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      border: 1px solid #cfd7d3;
+      background: #edf2ef;
+    }
+
+    .pairwise-tools {
+      margin-top: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pairwise-tools input {
+      border: 1px solid #bcc9c2;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      min-height: 36px;
+      font-size: 0.84rem;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      min-width: 240px;
+    }
+
+    .pairwise-tools input:focus {
+      border-color: #5aa495;
+      box-shadow: var(--focus-ring);
+    }
 
     /* --- Grade cards (Where Points Were Lost) --- */
     .grade-filters {
-      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
     }
+
     .grade-filters select {
       border: 1px solid #bcc9c2;
-      border-radius: 10px;
-      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      min-height: 36px;
       font-size: 0.84rem;
       background: #fff;
       color: var(--ink);
       outline: none;
     }
+
     .grade-filters select:focus {
       border-color: #5aa495;
-      box-shadow: 0 0 0 2px rgba(51,129,112,0.14);
+      box-shadow: var(--focus-ring);
     }
+
+    .grade-filters input {
+      border: 1px solid #bcc9c2;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      min-height: 36px;
+      font-size: 0.84rem;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      min-width: 220px;
+    }
+
+    .grade-filters input:focus {
+      border-color: #5aa495;
+      box-shadow: var(--focus-ring);
+    }
+
+    .result-count {
+      border: 1px solid #b7ddd5;
+      background: var(--teal-soft);
+      color: #0a5e55;
+      border-radius: var(--radius-pill);
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+    }
+
     .grade-card {
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius-md);
       margin-bottom: 8px;
       overflow: hidden;
     }
+
     .grade-card summary {
       padding: 10px 14px;
       cursor: pointer;
-      display: flex; align-items: center; gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 0.88rem;
       list-style: none;
     }
-    .grade-card summary::-webkit-details-marker { display: none; }
+
+    .grade-card summary::-webkit-details-marker {
+      display: none;
+    }
+
     .grade-card summary::before {
-      content: "\25B6"; font-size: 0.65rem; color: var(--muted);
+      content: "\25B6";
+      font-size: 0.65rem;
+      color: var(--muted);
       transition: transform 200ms ease;
     }
-    .grade-card[open] summary::before { transform: rotate(90deg); }
-    .grade-card summary .score-badge {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 26px; height: 26px; border-radius: 50%;
-      font-weight: 700; font-size: 0.82rem; color: #fff;
+
+    .grade-card[open] summary::before {
+      transform: rotate(90deg);
     }
-    .score-badge.s0 { background: var(--red); }
-    .score-badge.s1 { background: var(--amber); }
-    .score-badge.s2 { background: var(--green); }
+
+    .grade-card summary .score-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: #fff;
+    }
+
+    .score-badge.s0 {
+      background: var(--red);
+    }
+
+    .score-badge.s1 {
+      background: var(--amber);
+    }
+
+    .score-badge.s2 {
+      background: var(--green);
+    }
+
     .grade-card summary .version-tag {
       background: var(--teal-soft);
       color: var(--teal);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       padding: 2px 8px;
       font-size: 0.78rem;
       font-weight: 600;
     }
+
     .grade-card summary .type-tag {
       background: #f0eee6;
       color: #6b5f4b;
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       padding: 2px 8px;
       font-size: 0.78rem;
     }
+
     .grade-card summary .diff-tag {
-      font-size: 0.78rem; color: var(--muted);
+      font-size: 0.78rem;
+      color: var(--muted);
     }
+
     .grade-detail {
       padding: 0 14px 14px;
       font-size: 0.86rem;
       line-height: 1.55;
     }
+
     .grade-detail h4 {
       margin: 10px 0 4px;
       font-size: 0.82rem;
@@ -325,17 +818,19 @@
       letter-spacing: 0.3px;
       color: var(--muted);
     }
+
     .grade-detail .justification {
       background: #f8faf9;
       border: 1px solid #e5ebe8;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       padding: 10px;
       color: #2a3a34;
     }
+
     .grade-detail .formalization-text {
       background: #faf9f5;
       border: 1px solid #e8e4d8;
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       padding: 10px;
       color: #2a3a34;
       white-space: pre-wrap;
@@ -344,21 +839,25 @@
       max-height: 400px;
       overflow: auto;
     }
+
     .empty-state {
       text-align: center;
       padding: 32px;
       color: var(--muted);
       font-size: 0.92rem;
     }
+
     .loading {
       text-align: center;
       padding: 24px;
       color: var(--muted);
     }
+
     .loading::after {
       content: "";
       display: inline-block;
-      width: 18px; height: 18px;
+      width: 18px;
+      height: 18px;
       border: 2px solid var(--line);
       border-top-color: var(--teal);
       border-radius: 50%;
@@ -366,242 +865,1149 @@
       margin-left: 8px;
       vertical-align: middle;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* Comparison detail in pairwise */
-    .cmp-detail-list { padding: 8px 0 0; }
+    .cmp-detail-list {
+      padding: 8px 0 0;
+    }
+
     .cmp-item {
       border-top: 1px solid #edf1ef;
       padding: 8px 0;
       font-size: 0.84rem;
     }
+
     .cmp-item .cmp-meta {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
       margin-bottom: 4px;
     }
+
     .cmp-winner {
-      font-weight: 700; font-size: 0.82rem;
-      padding: 2px 8px; border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
     }
-    .cmp-winner.a { background: var(--teal-soft); color: var(--teal); }
-    .cmp-winner.b { background: #fff3dc; color: #8a6200; }
-    .cmp-winner.tie { background: #eef1ef; color: var(--muted); }
+
+    .cmp-winner.a {
+      background: var(--teal-soft);
+      color: var(--teal);
+    }
+
+    .cmp-winner.b {
+      background: #fff3dc;
+      color: #8a6200;
+    }
+
+    .cmp-winner.tie {
+      background: #eef1ef;
+      color: var(--muted);
+    }
+
+    .cmp-text-id-btn {
+      border: 1px solid #b7ddd5;
+      background: #f4fcfa;
+      color: #0f5f55;
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+    }
+
+    .cmp-hover-tooltip {
+      position: fixed;
+      z-index: 9999;
+      max-width: min(560px, 82vw);
+      max-height: 260px;
+      overflow: auto;
+      padding: 10px 12px;
+      border: 1px solid #b7ddd5;
+      border-radius: var(--radius-sm);
+      background: #fffefb;
+      color: #21302a;
+      box-shadow: var(--shadow);
+      font-size: 0.78rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 80ms linear, transform 80ms ease;
+    }
+
+    .cmp-hover-tooltip.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .cmp-filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 8px 0 10px;
+      border-bottom: 1px solid #edf1ef;
+    }
+
+    .cmp-filters select,
+    .cmp-filters input {
+      border: 1px solid #bcc9c2;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      min-height: 36px;
+      font-size: 0.8rem;
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+    }
+
+    .cmp-filters input {
+      min-width: 190px;
+    }
+
+    .cmp-filters select:focus,
+    .cmp-filters input:focus {
+      border-color: #5aa495;
+      box-shadow: var(--focus-ring);
+    }
+
+    .cmp-filters input:disabled {
+      background: #f1f5f3;
+      color: #6b7d77;
+      cursor: not-allowed;
+    }
+
+    .cmp-filter-note {
+      font-size: 0.76rem;
+      color: #0f5f55;
+      font-weight: 600;
+    }
+
+    .cmp-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      border-top: 1px solid #edf1ef;
+      padding-top: 8px;
+    }
+
+    .cmp-pagination button {
+      border: 1px solid #bdd5cd;
+      border-radius: var(--radius-sm);
+      background: #fff;
+      color: var(--ink);
+      font-size: 0.78rem;
+      padding: 5px 8px;
+      cursor: pointer;
+    }
+
+    .cmp-pagination button:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .cmp-pagination .cmp-page-info {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .cmp-formalizations-toggle {
+      border: 1px solid #b6d6cf;
+      border-radius: var(--radius-sm);
+      background: #f4fcfa;
+      color: #0f5f55;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+
+    .cmp-justification {
+      color: #3a4944;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .cmp-source-text {
+      margin-top: 8px;
+    }
+
+    .cmp-source-text h5 {
+      margin: 0 0 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .cmp-formalizations {
+      margin-top: 8px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cmp-form-col h5 {
+      margin: 0 0 4px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .cmp-form-text {
+      background: #faf9f5;
+      border: 1px solid #e8e4d8;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      color: #2a3a34;
+      white-space: pre-wrap;
+      font-family: "Fira Code", "SF Mono", "Menlo", monospace;
+      font-size: 0.78rem;
+      max-height: 320px;
+      overflow: auto;
+    }
+
+    /* --- Onboarding --- */
+    .onboarding-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(18, 32, 28, 0.58);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 900;
+    }
+
+    .onboarding-backdrop[hidden] {
+      display: none;
+    }
+
+    .onboarding-modal {
+      width: min(700px, 96vw);
+      border: 1px solid #b8cec7;
+      border-radius: var(--radius-lg);
+      background:
+        radial-gradient(100% 120% at 0% 0%, #f7fbf9 0%, #fdfbf4 70%),
+        #fffefb;
+      box-shadow: 0 30px 60px rgba(20, 35, 30, 0.24);
+      overflow: hidden;
+      display: grid;
+    }
+
+    .onboarding-head {
+      padding: 16px 18px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .onboarding-step {
+      font-size: 0.76rem;
+      color: #56736a;
+      border: 1px solid #bdd8d0;
+      border-radius: var(--radius-pill);
+      background: #e8f5f1;
+      padding: 3px 9px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .onboarding-close {
+      border: 1px solid #c7d5d0;
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: #4d635d;
+      font-size: 0.84rem;
+      padding: 6px 10px;
+      min-height: 34px;
+      cursor: pointer;
+    }
+
+    .onboarding-close:hover {
+      background: #f4faf8;
+    }
+
+    .onboarding-body {
+      padding: 10px 18px 0;
+    }
+
+    .onboarding-card {
+      border: 1px solid #d2dfda;
+      border-radius: var(--radius-md);
+      background: #ffffff;
+      padding: 16px;
+      min-height: 220px;
+      display: grid;
+      align-content: start;
+      gap: 10px;
+    }
+
+    .onboarding-kicker {
+      margin: 0;
+      color: #56736a;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      font-weight: 700;
+    }
+
+    .onboarding-title {
+      margin: 0;
+      font-family: "Rockwell", "Georgia", serif;
+      font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+      color: #19332e;
+      line-height: 1.22;
+    }
+
+    .onboarding-copy {
+      margin: 0;
+      color: #425850;
+      font-size: 0.92rem;
+      line-height: 1.48;
+      max-width: 58ch;
+    }
+
+    .onboarding-highlights {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .onboarding-chip {
+      border: 1px solid #cae1da;
+      background: #eef9f6;
+      color: #1b6056;
+      border-radius: var(--radius-pill);
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .onboarding-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-top: 1px solid #dbe6e2;
+      padding: 12px 18px 14px;
+      margin-top: 14px;
+    }
+
+    .onboarding-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .onboarding-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-pill);
+      background: #bfd2cb;
+    }
+
+    .onboarding-dot.active {
+      width: 22px;
+      background: var(--teal);
+    }
+
+    .onboarding-btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .onboarding-btn {
+      border-radius: var(--radius-sm);
+      border: 1px solid #bccfc9;
+      background: #fff;
+      color: #2d403a;
+      padding: 7px 12px;
+      min-height: 36px;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+
+    .onboarding-btn:hover {
+      background: #f3faf7;
+    }
+
+    .onboarding-btn.primary {
+      border-color: #1a8779;
+      background: #1a8779;
+      color: #fff;
+    }
+
+    .onboarding-btn.primary:hover {
+      background: #146e64;
+    }
+
+    .onboarding-btn:focus-visible,
+    .onboarding-close:focus-visible {
+      box-shadow: var(--focus-ring);
+      outline: none;
+    }
 
     /* Responsive */
     @media (max-width: 900px) {
-      .kpis { grid-template-columns: repeat(2, 1fr); }
-      .hero-row { flex-direction: column; align-items: flex-start; }
+      .kpis {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .graph-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cmp-formalizations {
+        grid-template-columns: 1fr;
+      }
+
+      .onboarding-card {
+        min-height: 240px;
+      }
     }
+
     @media (max-width: 600px) {
-      .kpis { grid-template-columns: 1fr; }
+      .kpis {
+        grid-template-columns: 1fr;
+      }
+
+      .pairwise-tools input,
+      .cmp-filters input,
+      .grade-filters input {
+        min-width: 100%;
+        width: 100%;
+      }
     }
   </style>
 </head>
+
 <body>
-<div class="page" id="app">
-  <!-- Hero -->
-  <div class="hero">
-    <h1>Clear Reason Results</h1>
-    <p class="hero-subtitle">
-      Formalization quality benchmark &mdash; comparing prompt versions on reasoning fidelity,
-      interrogation readiness, and structural clarity.
-    </p>
-    <div class="hero-row">
-      <label style="color:#a8d5cc; font-size:0.82rem;">
-        Run:
-        <select id="run-select" onchange="switchRun(this.value)">
-          <option id="run-opt-current">Loading&hellip;</option>
-        </select>
-      </label>
-      <div class="hero-meta" id="hero-meta"></div>
-      <a class="hero-link" href="../index.html">&larr; Home</a>
+  <div class="page" id="app">
+    <!-- Hero -->
+    <div class="hero">
+      <h1>Clear Reason Results</h1>
+      <p class="hero-subtitle">
+        Formalization quality benchmark &mdash; comparing prompt versions on reasoning fidelity,
+        interrogation readiness, and structural clarity.
+      </p>
+      <div class="hero-row">
+        <label style="color:#a8d5cc; font-size:0.82rem;">
+          Run:
+          <select id="run-select" onchange="switchRun(this.value)">
+            <option id="run-opt-current">Loading&hellip;</option>
+          </select>
+        </label>
+        <div class="hero-meta" id="hero-meta"></div>
+        <a class="hero-link" id="progress-link" href="progress.html">Live Progress</a>
+        <a class="hero-link" href="../index.html">&larr; Home</a>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis" id="kpi-bar">
+      <div class="kpi">
+        <div class="label">Loading&hellip;</div>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="panel" id="leaderboard-panel">
+      <h2>Leaderboard</h2>
+      <p class="subtle">Prompt versions ranked by average judge score (0 = opaque, 1 = functional, 2 =
+        interrogation-ready)</p>
+      <div class="table-wrap" id="leaderboard-wrap">
+        <div class="loading">Loading leaderboard</div>
+      </div>
+      <div class="dist-legend" style="margin-top:8px">
+        <span><span class="dot s0"></span> Score 0</span>
+        <span><span class="dot s1"></span> Score 1</span>
+        <span><span class="dot s2"></span> Score 2</span>
+      </div>
+    </div>
+
+    <!-- Per-Type Heatmap -->
+    <div class="panel" id="heatmap-panel">
+      <h2>Per-Type Breakdown</h2>
+      <p class="subtle">Average score by version and reasoning type (color: red 0 &rarr; amber 1 &rarr; green 2)</p>
+      <div id="heatmap-grid"></div>
+      <div id="heatmap-status" class="heatmap-status" aria-live="polite"></div>
+    </div>
+
+    <!-- Comparative Graphs -->
+    <div class="panel" id="graphs-panel">
+      <h2>Comparative Graphs</h2>
+      <p class="subtle">Graph-first summary of score composition and pairwise relative wins.</p>
+      <div class="graph-grid">
+        <section class="graph-card" aria-labelledby="score-composition-title">
+          <h3 id="score-composition-title">Stacked Score Composition by Version</h3>
+          <div class="chart-shell" id="score-composition-chart">
+            <div class="loading" style="font-size:0.82rem">Loading chart</div>
+          </div>
+          <div class="chart-legend">
+            <span><span class="dot s0"></span> Score 0 share</span>
+            <span><span class="dot s1"></span> Score 1 share</span>
+            <span><span class="dot s2"></span> Score 2 share</span>
+          </div>
+          <p class="subtle chart-summary" id="score-composition-summary"></p>
+        </section>
+
+        <section class="graph-card" aria-labelledby="win-matrix-title">
+          <h3 id="win-matrix-title">Pairwise Win-Rate Matrix</h3>
+          <div class="chart-shell" id="pairwise-matrix-chart">
+            <div class="loading" style="font-size:0.82rem">Loading chart</div>
+          </div>
+          <div class="chart-legend">
+            <span><span class="dot s0"></span> 0% row-win rate</span>
+            <span><span class="dot s1"></span> 50% row-win rate</span>
+            <span><span class="dot s2"></span> 100% row-win rate</span>
+          </div>
+          <p class="subtle chart-summary" id="pairwise-matrix-summary"></p>
+        </section>
+
+        <section class="graph-card graph-card-wide" aria-labelledby="baseline-delta-title">
+          <div class="graph-card-head">
+            <h3 id="baseline-delta-title">Delta vs Baseline</h3>
+            <label class="baseline-control">
+              Baseline:
+              <select id="baseline-select" aria-label="Select baseline version for delta chart">
+                <option>Loading...</option>
+              </select>
+            </label>
+          </div>
+          <p class="subtle" style="margin-bottom:8px">Formula:
+            <code>&Delta; = version metric &minus; baseline metric</code></p>
+          <div class="chart-shell" id="baseline-delta-chart">
+            <div class="loading" style="font-size:0.82rem">Loading chart</div>
+          </div>
+          <div class="chart-legend">
+            <span><span class="dot s0"></span> Negative delta vs baseline</span>
+            <span><span class="dot s1"></span> Near baseline</span>
+            <span><span class="dot s2"></span> Positive delta vs baseline</span>
+          </div>
+          <p class="subtle chart-summary" id="baseline-delta-summary"></p>
+          <p class="baseline-caveat">
+            Compare normalized deltas within the same benchmark cohort; avoid absolute score comparisons across
+            different benchmark families.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <!-- Pairwise Head-to-Head -->
+    <div class="panel" id="pairwise-panel">
+      <h2>Pairwise Head-to-Head</h2>
+      <p class="subtle">Blinded comparison results &mdash; which version the judge preferred on each text</p>
+      <div class="pairwise-tools">
+        <label style="font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:8px;">
+          Text ID search:
+          <input id="pairwise-global-text" type="text" placeholder="e.g. fg_01">
+        </label>
+        <span style="font-size:0.78rem;color:var(--muted);">Hover a text_id to preview the original prompt, click it to
+          pin inline.</span>
+      </div>
+      <p class="pair-expand-hint">Click any matchup row to expand per-text details.</p>
+      <div id="pairwise-list">
+        <div class="loading">Loading comparisons</div>
+      </div>
+    </div>
+
+    <!-- Where Points Were Lost -->
+    <div class="panel" id="lost-panel">
+      <h2>Where Points Were Lost</h2>
+      <p class="subtle">Grades below 2 (interrogation-ready) &mdash; expand for justification and formalization</p>
+      <div class="grade-filters" id="grade-filters"></div>
+      <div id="grade-list">
+        <div class="loading">Loading grades</div>
+      </div>
     </div>
   </div>
 
-  <!-- KPIs -->
-  <div class="kpis" id="kpi-bar">
-    <div class="kpi"><div class="label">Loading&hellip;</div></div>
+  <div id="onboarding-backdrop" class="onboarding-backdrop" hidden aria-hidden="true">
+    <section class="onboarding-modal" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
+      <div class="onboarding-head">
+        <span id="onboarding-step-label" class="onboarding-step">Step 1 of 3</span>
+        <button id="onboarding-close" type="button" class="onboarding-close" aria-label="Skip onboarding">Skip</button>
+      </div>
+      <div class="onboarding-body">
+        <article class="onboarding-card">
+          <p id="onboarding-kicker" class="onboarding-kicker"></p>
+          <h2 id="onboarding-title" class="onboarding-title"></h2>
+          <p id="onboarding-copy" class="onboarding-copy"></p>
+          <div id="onboarding-highlights" class="onboarding-highlights"></div>
+        </article>
+      </div>
+      <div class="onboarding-actions">
+        <div id="onboarding-dots" class="onboarding-dots" aria-hidden="true"></div>
+        <div class="onboarding-btns">
+          <button id="onboarding-prev" type="button" class="onboarding-btn">Back</button>
+          <button id="onboarding-next" type="button" class="onboarding-btn primary">Next</button>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <!-- Leaderboard -->
-  <div class="panel" id="leaderboard-panel">
-    <h2>Leaderboard</h2>
-    <p class="subtle">Prompt versions ranked by average judge score (0 = opaque, 1 = functional, 2 = interrogation-ready)</p>
-    <div class="table-wrap" id="leaderboard-wrap">
-      <div class="loading">Loading leaderboard</div>
-    </div>
-    <div class="dist-legend" style="margin-top:8px">
-      <span><span class="dot s0"></span> Score 0</span>
-      <span><span class="dot s1"></span> Score 1</span>
-      <span><span class="dot s2"></span> Score 2</span>
-    </div>
-  </div>
+  <script>
+    /* ── State ── */
+    const runParam = new URLSearchParams(location.search).get("run");
+    let RUN_ID = runParam && runParam.trim() ? runParam.trim() : "";
+    let BASE = RUN_ID ? `../runs/${RUN_ID}` : "";
+    let summary = null;
+    let manifest = null;
+    let gradesData = null;
+    let comparisonsData = null;
+    let formalizationsData = null;
+    const formalizationIndex = new Map();
+    const textById = new Map();
+    const pairState = new Map();
+    const pairMetaByKey = new Map();
+    const PAIR_PAGE_SIZE = 10;
+    let sharedTextIdFilter = "";
+    let pairGlobalSearchTimer = null;
+    const CMP_HOVER_DELAY_MS = 120;
+    let cmpHoverTooltipEl = null;
+    let cmpHoverTimer = null;
+    let cmpHoverActiveBtn = null;
+    let pendingHeatmapDrillDown = null;
+    let gradesLoading = false;
+    let selectedBaselineVersion = "";
+    let latestLeaderboardRows = [];
+    let latestComparisonPairs = [];
+    const ONBOARDING_STORAGE_KEY = "clear_reason_dashboard_onboarding_v1";
+    const onboardingSlides = [
+      {
+        kicker: "Welcome",
+        title: "Start with the top-level signal, then drill down.",
+        copy: "The KPI cards and leaderboard answer one question fast: which version is strongest for this run. Use this as your orientation point before looking at individual texts.",
+        chips: ["KPI snapshot", "Holistic top version", "Score distribution"],
+      },
+      {
+        kicker: "Comparative Graphs",
+        title: "Use the graph panel to read score shape and pairwise pressure.",
+        copy: "Stacked composition shows how many 0/1/2 outcomes each version gets. The pairwise matrix surfaces direct head-to-head win rates. Delta vs baseline shows relative movement, not absolute cross-benchmark claims.",
+        chips: ["Stacked 0/1/2 share", "Pairwise matrix", "Dynamic baseline delta"],
+      },
+      {
+        kicker: "Investigation",
+        title: "Open pairwise rows and lost-points cards for root causes.",
+        copy: "Expand a pair to inspect justification and formalization diffs. Then use Where Points Were Lost to filter low scores by version, type, and text_id to isolate failure patterns quickly.",
+        chips: ["Expandable pairwise rows", "Shared text_id filters", "Heatmap drill-down"],
+      },
+    ];
+    let onboardingStepIndex = 0;
+    let onboardingBound = false;
 
-  <!-- Per-Type Heatmap -->
-  <div class="panel" id="heatmap-panel">
-    <h2>Per-Type Breakdown</h2>
-    <p class="subtle">Average score by version and reasoning type (color: red 0 &rarr; amber 1 &rarr; green 2)</p>
-    <div id="heatmap-grid"></div>
-  </div>
+    /* ── Boot ── */
+    async function boot() {
+      const globalPairSearch = document.getElementById("pairwise-global-text");
+      if (globalPairSearch) {
+        globalPairSearch.value = sharedTextIdFilter;
+        globalPairSearch.addEventListener("input", () => {
+          setSharedTextIdFilter(globalPairSearch.value, "pairwise");
+        });
+      }
 
-  <!-- Pairwise Head-to-Head -->
-  <div class="panel" id="pairwise-panel">
-    <h2>Pairwise Head-to-Head</h2>
-    <p class="subtle">Blinded comparison results &mdash; which version the judge preferred on each text</p>
-    <div id="pairwise-list">
-      <div class="loading">Loading comparisons</div>
-    </div>
-  </div>
+      renderHero(null);
+      if (!RUN_ID) {
+        renderNoRunSelected();
+        return;
+      }
 
-  <!-- Where Points Were Lost -->
-  <div class="panel" id="lost-panel">
-    <h2>Where Points Were Lost</h2>
-    <p class="subtle">Grades below 2 (interrogation-ready) &mdash; expand for justification and formalization</p>
-    <div class="grade-filters" id="grade-filters"></div>
-    <div id="grade-list">
-      <div class="loading">Loading grades</div>
-    </div>
-  </div>
-</div>
+      try {
+        manifest = await fetchJSON(`${BASE}/run_manifest.json`);
+      } catch { manifest = {}; }
 
-<script>
-/* ── State ── */
-const runParam = new URLSearchParams(location.search).get("run");
-let RUN_ID = runParam && runParam.trim() ? runParam.trim() : "";
-let BASE = RUN_ID ? `../runs/${RUN_ID}` : "";
-let summary = null;
-let manifest = null;
-let gradesData = null;
-let comparisonsData = null;
+      try {
+        const meta = await fetchJSON(`${BASE}/collect_meta.json`);
+        renderHero(meta);
+      } catch { }
 
-/* ── Boot ── */
-async function boot() {
-  renderHero(null);
-  if (!RUN_ID) {
-    renderNoRunSelected();
-    return;
-  }
+      try {
+        summary = await fetchJSON(`${BASE}/aggregate/aggregate_summary.json`);
+        renderKPIs(summary);
+        renderLeaderboard(summary.leaderboard);
+        renderPhaseAGraphs(summary);
+        renderHeatmap(summary.per_type_breakdown, summary.leaderboard);
+        renderPairwise(summary.comparison_pairs);
+        if (shouldShowOnboarding()) {
+          openOnboarding();
+        }
+      } catch (e) {
+        document.getElementById("kpi-bar").innerHTML =
+          `<div class="kpi"><div class="label" style="color:var(--red)">Failed to load aggregate_summary.json: ${esc(e.message)}</div></div>`;
+      }
 
-  try {
-    manifest = await fetchJSON(`${BASE}/run_manifest.json`);
-  } catch { manifest = {}; }
-
-  try {
-    const meta = await fetchJSON(`${BASE}/collect_meta.json`);
-    renderHero(meta);
-  } catch {}
-
-  try {
-    summary = await fetchJSON(`${BASE}/aggregate/aggregate_summary.json`);
-    renderKPIs(summary);
-    renderLeaderboard(summary.leaderboard);
-    renderHeatmap(summary.per_type_breakdown, summary.leaderboard);
-    renderPairwise(summary.comparison_pairs);
-  } catch (e) {
-    document.getElementById("kpi-bar").innerHTML =
-      `<div class="kpi"><div class="label" style="color:var(--red)">Failed to load aggregate_summary.json: ${esc(e.message)}</div></div>`;
-  }
-
-  loadGrades();
-}
-
-/* ── Data helpers ── */
-async function fetchJSON(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-  return r.json();
-}
-
-async function fetchJSONL(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-  const text = await r.text();
-  return text.trim().split("\n").filter(Boolean).map(l => JSON.parse(l));
-}
-
-function esc(s) {
-  const d = document.createElement("div");
-  d.textContent = s;
-  return d.innerHTML;
-}
-
-function fmt(n, d = 4) {
-  return Number(n).toFixed(d).replace(/\.?0+$/, "") || "0";
-}
-
-function pct(n) { return (n * 100).toFixed(1) + "%"; }
-
-/* ── Run switching ── */
-function switchRun(id) {
-  if (!id) return;
-  const u = new URL(location.href);
-  u.searchParams.set("run", id);
-  location.href = u.toString();
-}
-
-/* ── Hero ── */
-function renderHero(meta) {
-  const sel = document.getElementById("run-select");
-  if (RUN_ID) {
-    sel.disabled = false;
-    sel.innerHTML = `<option value="${esc(RUN_ID)}" selected>${esc(RUN_ID)}</option>`;
-  } else {
-    sel.disabled = true;
-    sel.innerHTML = `<option selected>No run selected</option>`;
-  }
-
-  const metaEl = document.getElementById("hero-meta");
-  if (meta) {
-    const parts = [];
-    if (meta.model) parts.push(`Model: ${esc(meta.model)}`);
-    if (meta.version_count) parts.push(`${meta.version_count} versions`);
-    if (meta.text_count) parts.push(`${meta.text_count} texts`);
-    if (meta.timestamp_utc) {
-      const d = new Date(meta.timestamp_utc);
-      parts.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }));
+      loadGrades();
     }
-    metaEl.innerHTML = parts.map(p => `<span>${p}</span>`).join("");
-  } else if (RUN_ID) {
-    metaEl.innerHTML = `<span>Run: ${esc(RUN_ID)}</span>`;
-  } else {
-    metaEl.innerHTML = "";
-  }
 
-  /* Try to discover other runs */
-  tryDiscoverRuns();
-}
+    function getOnboardingSeen() {
+      try {
+        return localStorage.getItem(ONBOARDING_STORAGE_KEY) === "1";
+      } catch {
+        return false;
+      }
+    }
 
-async function tryDiscoverRuns() {
-  /* We can't list directories via fetch, so just show the current run.
-     If more run_manifest.json files are linked in the future, we'd add them here. */
-}
+    function markOnboardingSeen() {
+      try {
+        localStorage.setItem(ONBOARDING_STORAGE_KEY, "1");
+      } catch { }
+    }
 
-function renderNoRunSelected() {
-  const message = "No run selected. Open this page with ?run=<run_id> to load results.";
-  document.getElementById("hero-meta").innerHTML =
-    `<span>${message}</span>`;
-  document.getElementById("kpi-bar").innerHTML =
-    `<div class="kpi"><div class="label">${message}</div></div>`;
-  document.getElementById("leaderboard-wrap").innerHTML =
-    `<div class="empty-state">${message}</div>`;
-  document.getElementById("heatmap-grid").innerHTML =
-    `<div class="empty-state">${message}</div>`;
-  document.getElementById("pairwise-list").innerHTML =
-    `<div class="empty-state">${message}</div>`;
-  document.getElementById("grade-filters").innerHTML = "";
-  document.getElementById("grade-list").innerHTML =
-    `<div class="empty-state">${message}</div>`;
-}
+    function shouldShowOnboarding() {
+      if (!RUN_ID || !summary) return false;
+      const forceOnboarding = new URLSearchParams(location.search).get("onboarding");
+      if (forceOnboarding === "1") return true;
+      return !getOnboardingSeen();
+    }
 
-/* ── KPIs ── */
-function renderKPIs(s) {
-  const top = s.leaderboard[0];
-  const totalErrors = s.leaderboard.reduce((a, v) => a + (v.error_count || 0), 0);
-  const errorRate = s.total_formalizations > 0
-    ? (totalErrors / s.total_formalizations * 100).toFixed(1) + "%"
-    : "0%";
+    function renderOnboardingSlide() {
+      const total = onboardingSlides.length;
+      const step = onboardingSlides[onboardingStepIndex];
+      if (!step) return;
 
-  document.getElementById("kpi-bar").innerHTML = `
+      const stepLabel = document.getElementById("onboarding-step-label");
+      const kickerEl = document.getElementById("onboarding-kicker");
+      const titleEl = document.getElementById("onboarding-title");
+      const copyEl = document.getElementById("onboarding-copy");
+      const chipsEl = document.getElementById("onboarding-highlights");
+      const dotsEl = document.getElementById("onboarding-dots");
+      const prevBtn = document.getElementById("onboarding-prev");
+      const nextBtn = document.getElementById("onboarding-next");
+      if (!stepLabel || !kickerEl || !titleEl || !copyEl || !chipsEl || !dotsEl || !prevBtn || !nextBtn) return;
+
+      stepLabel.textContent = `Step ${onboardingStepIndex + 1} of ${total}`;
+      kickerEl.textContent = step.kicker;
+      titleEl.textContent = step.title;
+      copyEl.textContent = step.copy;
+      chipsEl.innerHTML = (step.chips || [])
+        .map((chip) => `<span class="onboarding-chip">${esc(chip)}</span>`)
+        .join("");
+      dotsEl.innerHTML = onboardingSlides
+        .map((_, idx) => `<span class="onboarding-dot${idx === onboardingStepIndex ? " active" : ""}"></span>`)
+        .join("");
+      prevBtn.disabled = onboardingStepIndex === 0;
+      nextBtn.textContent = onboardingStepIndex >= total - 1 ? "Start Exploring" : "Next";
+    }
+
+    function closeOnboarding(markSeen = true) {
+      const backdrop = document.getElementById("onboarding-backdrop");
+      if (!backdrop) return;
+      backdrop.hidden = true;
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if (markSeen) {
+        markOnboardingSeen();
+      }
+    }
+
+    function openOnboarding() {
+      const backdrop = document.getElementById("onboarding-backdrop");
+      const closeBtn = document.getElementById("onboarding-close");
+      const prevBtn = document.getElementById("onboarding-prev");
+      const nextBtn = document.getElementById("onboarding-next");
+      if (!backdrop || !closeBtn || !prevBtn || !nextBtn) return;
+
+      if (!onboardingBound) {
+        closeBtn.addEventListener("click", () => closeOnboarding(true));
+        prevBtn.addEventListener("click", () => {
+          onboardingStepIndex = Math.max(0, onboardingStepIndex - 1);
+          renderOnboardingSlide();
+        });
+        nextBtn.addEventListener("click", () => {
+          const last = onboardingSlides.length - 1;
+          if (onboardingStepIndex >= last) {
+            closeOnboarding(true);
+            return;
+          }
+          onboardingStepIndex += 1;
+          renderOnboardingSlide();
+        });
+        backdrop.addEventListener("click", (event) => {
+          if (event.target === backdrop) {
+            closeOnboarding(true);
+          }
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !backdrop.hidden) {
+            closeOnboarding(true);
+          }
+        });
+        onboardingBound = true;
+      }
+
+      onboardingStepIndex = 0;
+      renderOnboardingSlide();
+      backdrop.hidden = false;
+      backdrop.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    /* ── Data helpers ── */
+    async function fetchJSON(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      return r.json();
+    }
+
+    async function fetchJSONL(url) {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      const text = await r.text();
+      return text.trim().split("\n").filter(Boolean).map(l => JSON.parse(l));
+    }
+
+    function esc(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function fmt(n, d = 4) {
+      return Number(n).toFixed(d).replace(/\.?0+$/, "") || "0";
+    }
+
+    function pct(n) { return (n * 100).toFixed(1) + "%"; }
+    function toDomId(value) { return String(value).replace(/[^A-Za-z0-9_-]+/g, "_"); }
+    function pairKeyFor(versionA, versionB) { return `${versionA}::${versionB}`; }
+    function pairMatch(item, versionA, versionB) {
+      return (
+        (item.version_a === versionA && item.version_b === versionB) ||
+        (item.version_a === versionB && item.version_b === versionA)
+      );
+    }
+
+    function setSharedTextIdFilter(raw, source) {
+      const rawText = String(raw || "").trim();
+      sharedTextIdFilter = rawText.toLowerCase();
+      const hasGlobalTextFilter = Boolean(sharedTextIdFilter);
+
+      const pairSearch = document.getElementById("pairwise-global-text");
+      const gradeSearch = document.getElementById("gf-text-id");
+      if (source !== "pairwise" && pairSearch && pairSearch.value !== rawText) {
+        pairSearch.value = rawText;
+      }
+      if (source !== "grades" && gradeSearch && gradeSearch.value !== rawText) {
+        gradeSearch.value = rawText;
+      }
+
+      if (hasGlobalTextFilter) {
+        pairState.forEach((state) => {
+          if (state.text) {
+            state.text = "";
+            state.page = 0;
+          }
+        });
+      }
+
+      if (gradesData) renderGrades();
+      syncPairTextFilterInputs();
+
+      if (pairGlobalSearchTimer) {
+        clearTimeout(pairGlobalSearchTimer);
+      }
+      pairGlobalSearchTimer = setTimeout(() => {
+        document.querySelectorAll(".pair-card[open]").forEach((card) => {
+          const pairKey = card.dataset.pairKey;
+          if (pairKey) renderPairDetailPage(pairKey);
+        });
+      }, 180);
+    }
+
+    function syncPairTextFilterInputs() {
+      const hasGlobalTextFilter = Boolean(sharedTextIdFilter);
+      const placeholder = hasGlobalTextFilter
+        ? "Clear global text_id filter to search in this pair"
+        : "Search text_id in this pair";
+      document.querySelectorAll(".cmp-pair-text-filter").forEach((input) => {
+        if (hasGlobalTextFilter) {
+          input.value = "";
+        }
+        input.disabled = hasGlobalTextFilter;
+        input.placeholder = placeholder;
+      });
+      document.querySelectorAll(".cmp-filter-note").forEach((note) => {
+        if (hasGlobalTextFilter) {
+          note.textContent = `Using global text_id filter "${sharedTextIdFilter}".`;
+          note.style.display = "inline";
+        } else {
+          note.textContent = "";
+          note.style.display = "none";
+        }
+      });
+    }
+
+    function setHeatmapStatus(message, pending = false) {
+      const statusEl = document.getElementById("heatmap-status");
+      if (!statusEl) return;
+      statusEl.textContent = message || "";
+      statusEl.className = pending ? "heatmap-status pending" : "heatmap-status";
+    }
+
+    function ensureCmpHoverTooltip() {
+      if (cmpHoverTooltipEl) return cmpHoverTooltipEl;
+      const el = document.createElement("div");
+      el.className = "cmp-hover-tooltip";
+      document.body.appendChild(el);
+      cmpHoverTooltipEl = el;
+      return el;
+    }
+
+    function positionCmpHoverTooltip(event) {
+      if (!cmpHoverTooltipEl || !event) return;
+      const offsetX = 14;
+      const offsetY = 18;
+      const maxLeft = window.innerWidth - cmpHoverTooltipEl.offsetWidth - 8;
+      const maxTop = window.innerHeight - cmpHoverTooltipEl.offsetHeight - 8;
+      const left = Math.min(maxLeft, Math.max(8, event.clientX + offsetX));
+      const top = Math.min(maxTop, Math.max(8, event.clientY + offsetY));
+      cmpHoverTooltipEl.style.left = `${left}px`;
+      cmpHoverTooltipEl.style.top = `${top}px`;
+    }
+
+    function hideCmpHoverTooltip() {
+      if (cmpHoverTimer) {
+        clearTimeout(cmpHoverTimer);
+        cmpHoverTimer = null;
+      }
+      cmpHoverActiveBtn = null;
+      if (!cmpHoverTooltipEl) return;
+      cmpHoverTooltipEl.classList.remove("visible");
+    }
+
+    function scheduleCmpHoverTooltip(button, event) {
+      if (cmpHoverTimer) {
+        clearTimeout(cmpHoverTimer);
+        cmpHoverTimer = null;
+      }
+      cmpHoverActiveBtn = button;
+      const capturedEvent = event;
+      cmpHoverTimer = setTimeout(() => {
+        if (!button || !button.isConnected || cmpHoverActiveBtn !== button) return;
+        const textId = button.dataset.textId || "";
+        const sourceText = getSourceText(textId);
+        const preview = sourceText.length > 900
+          ? `${sourceText.slice(0, 897)}...`
+          : sourceText;
+        const tooltip = ensureCmpHoverTooltip();
+        tooltip.textContent = preview;
+        positionCmpHoverTooltip(capturedEvent);
+        tooltip.classList.add("visible");
+      }, CMP_HOVER_DELAY_MS);
+    }
+
+    function attachCmpHoverTooltip(button) {
+      button.addEventListener("mouseenter", (event) => {
+        scheduleCmpHoverTooltip(button, event);
+      });
+      button.addEventListener("mousemove", (event) => {
+        if (!cmpHoverTooltipEl || !cmpHoverTooltipEl.classList.contains("visible")) return;
+        if (cmpHoverActiveBtn !== button) return;
+        positionCmpHoverTooltip(event);
+      });
+      button.addEventListener("mouseleave", () => {
+        if (cmpHoverActiveBtn === button) {
+          hideCmpHoverTooltip();
+        }
+      });
+      button.addEventListener("click", () => {
+        hideCmpHoverTooltip();
+      });
+    }
+
+    /* ── Run switching ── */
+    function switchRun(id) {
+      if (!id) return;
+      hideCmpHoverTooltip();
+      const u = new URL(location.href);
+      u.searchParams.set("run", id);
+      location.href = u.toString();
+    }
+
+    /* ── Hero ── */
+    function renderHero(meta) {
+      const sel = document.getElementById("run-select");
+      if (RUN_ID) {
+        sel.disabled = false;
+        sel.innerHTML = `<option value="${esc(RUN_ID)}" selected>${esc(RUN_ID)}</option>`;
+      } else {
+        sel.disabled = true;
+        sel.innerHTML = `<option selected>No run selected</option>`;
+      }
+
+      const metaEl = document.getElementById("hero-meta");
+      if (meta) {
+        const parts = [];
+        if (meta.model) parts.push(`Model: ${esc(meta.model)}`);
+        if (meta.version_count) parts.push(`${meta.version_count} versions`);
+        if (meta.text_count) parts.push(`${meta.text_count} texts`);
+        if (meta.timestamp_utc) {
+          const d = new Date(meta.timestamp_utc);
+          parts.push(d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }));
+        }
+        metaEl.innerHTML = parts.map(p => `<span>${p}</span>`).join("");
+      } else if (RUN_ID) {
+        metaEl.innerHTML = `<span>Run: ${esc(RUN_ID)}</span>`;
+      } else {
+        metaEl.innerHTML = "";
+      }
+
+      const progressLink = document.getElementById("progress-link");
+      if (progressLink) {
+        progressLink.href = RUN_ID
+          ? `progress.html?run=${encodeURIComponent(RUN_ID)}`
+          : "progress.html";
+      }
+
+      /* Try to discover other runs */
+      tryDiscoverRuns();
+    }
+
+    async function tryDiscoverRuns() {
+      /* We can't list directories via fetch, so just show the current run.
+         If more run_manifest.json files are linked in the future, we'd add them here. */
+    }
+
+    function renderNoRunSelected() {
+      const message = "No run selected. Open this page with ?run=<run_id> to load results.";
+      document.getElementById("hero-meta").innerHTML =
+        `<span>${message}</span>`;
+      document.getElementById("kpi-bar").innerHTML =
+        `<div class="kpi"><div class="label">${message}</div></div>`;
+      document.getElementById("leaderboard-wrap").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+      document.getElementById("heatmap-grid").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+      document.getElementById("heatmap-status").textContent = "";
+      document.getElementById("score-composition-chart").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+      document.getElementById("pairwise-matrix-chart").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+      document.getElementById("score-composition-summary").textContent = "";
+      document.getElementById("pairwise-matrix-summary").textContent = "";
+      document.getElementById("baseline-delta-chart").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+      document.getElementById("baseline-delta-summary").textContent = "";
+      const baselineSelect = document.getElementById("baseline-select");
+      if (baselineSelect) {
+        baselineSelect.innerHTML = `<option selected>No run selected</option>`;
+        baselineSelect.disabled = true;
+      }
+      document.getElementById("pairwise-list").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+      document.getElementById("grade-filters").innerHTML = "";
+      document.getElementById("grade-list").innerHTML =
+        `<div class="empty-state">${message}</div>`;
+    }
+
+    function buildPairwiseStrengthIndex(pairs) {
+      const map = new Map();
+      for (const pair of pairs || []) {
+        const versionA = String(pair.version_a || "");
+        const versionB = String(pair.version_b || "");
+        if (!versionA || !versionB) continue;
+        const winsA = Number(pair.a_wins || 0);
+        const winsB = Number(pair.b_wins || 0);
+        const ties = Number(pair.ties || 0);
+        const total = Number(pair.total || (winsA + winsB + ties));
+        if (!total) continue;
+
+        if (!map.has(versionA)) map.set(versionA, { wins: 0, losses: 0, ties: 0, total: 0, edge: 0, winRate: 0 });
+        if (!map.has(versionB)) map.set(versionB, { wins: 0, losses: 0, ties: 0, total: 0, edge: 0, winRate: 0 });
+        const a = map.get(versionA);
+        const b = map.get(versionB);
+
+        a.wins += winsA;
+        a.losses += winsB;
+        a.ties += ties;
+        a.total += total;
+
+        b.wins += winsB;
+        b.losses += winsA;
+        b.ties += ties;
+        b.total += total;
+      }
+
+      map.forEach((row) => {
+        row.edge = row.total ? (row.wins - row.losses) / row.total : 0;
+        row.winRate = row.total ? row.wins / row.total : 0;
+      });
+      return map;
+    }
+
+    function errorRateForVersion(row) {
+      const scored = Number(row.scored_count || 0);
+      const errors = Number(row.error_count || 0);
+      return scored > 0 ? errors / scored : 0;
+    }
+
+    function compareVersionsHolistic(a, b, pairStrength) {
+      const avgDiff = Number(b.avg_score || 0) - Number(a.avg_score || 0);
+      if (Math.abs(avgDiff) > 1e-9) return avgDiff;
+
+      const irDiff = Number(b.interrogation_ready_rate || 0) - Number(a.interrogation_ready_rate || 0);
+      if (Math.abs(irDiff) > 1e-9) return irDiff;
+
+      const edgeA = pairStrength.get(String(a.version_id || ""))?.edge || 0;
+      const edgeB = pairStrength.get(String(b.version_id || ""))?.edge || 0;
+      const edgeDiff = edgeB - edgeA;
+      if (Math.abs(edgeDiff) > 1e-9) return edgeDiff;
+
+      const errDiff = errorRateForVersion(a) - errorRateForVersion(b);
+      if (Math.abs(errDiff) > 1e-9) return errDiff;
+
+      const scoredDiff = Number(b.scored_count || 0) - Number(a.scored_count || 0);
+      if (Math.abs(scoredDiff) > 1e-9) return scoredDiff;
+
+      return String(a.version_id || "").localeCompare(String(b.version_id || ""), undefined, { numeric: true, sensitivity: "base" });
+    }
+
+    /* ── KPIs ── */
+    function renderKPIs(s) {
+      if (!Array.isArray(s?.leaderboard) || !s.leaderboard.length) {
+        document.getElementById("kpi-bar").innerHTML = `
+      <div class="kpi"><div class="label">No leaderboard data available</div></div>
+    `;
+        return;
+      }
+      const pairStrength = buildPairwiseStrengthIndex(s.comparison_pairs || []);
+      const top = [...s.leaderboard].sort((a, b) => compareVersionsHolistic(a, b, pairStrength))[0];
+      const topPair = pairStrength.get(String(top?.version_id || ""));
+      const topPairEdge = topPair && topPair.total
+        ? `${formatSigned(topPair.edge * 100, 1)}pp`
+        : "n/a";
+      const totalErrors = s.leaderboard.reduce((a, v) => a + (v.error_count || 0), 0);
+      const errorRate = s.total_formalizations > 0
+        ? (totalErrors / s.total_formalizations * 100).toFixed(1) + "%"
+        : "0%";
+
+      document.getElementById("kpi-bar").innerHTML = `
     <div class="kpi teal">
       <div class="label">Total Formalizations</div>
       <div class="value">${s.total_formalizations}</div>
@@ -615,7 +2021,7 @@ function renderKPIs(s) {
     <div class="kpi green">
       <div class="label">Top Version</div>
       <div class="value">${esc(top.version_id)}</div>
-      <div class="hint">avg ${fmt(top.avg_score)} &middot; IR ${pct(top.interrogation_ready_rate)}</div>
+      <div class="hint">avg ${fmt(top.avg_score)} &middot; IR ${pct(top.interrogation_ready_rate)} &middot; pair edge ${topPairEdge}</div>
     </div>
     <div class="kpi ${totalErrors > 0 ? "red" : "green"}">
       <div class="label">Error Rate</div>
@@ -623,50 +2029,64 @@ function renderKPIs(s) {
       <div class="hint">${totalErrors} errors of ${s.total_formalizations}</div>
     </div>
   `;
-}
-
-/* ── Leaderboard ── */
-let lbSortCol = "avg_score";
-let lbSortAsc = false;
-
-function renderLeaderboard(lb) {
-  const sorted = [...lb].sort((a, b) => {
-    let va = a[lbSortCol], vb = b[lbSortCol];
-    if (typeof va === "string") return lbSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
-    return lbSortAsc ? va - vb : vb - va;
-  });
-
-  const arrow = (col) => col === lbSortCol
-    ? `<span class="sort-arrow">${lbSortAsc ? "\u25B2" : "\u25BC"}</span>` : "";
-
-  const cols = [
-    { key: "_rank", label: "#" },
-    { key: "version_id", label: "Version" },
-    { key: "avg_score", label: "Avg Score" },
-    { key: "interrogation_ready_rate", label: "IR Rate" },
-    { key: "scored_count", label: "Graded" },
-    { key: "error_count", label: "Errors" },
-    { key: "_dist", label: "Distribution" },
-  ];
-
-  let html = `<table><thead><tr>`;
-  for (const c of cols) {
-    if (c.key === "_rank" || c.key === "_dist") {
-      html += `<th>${c.label}</th>`;
-    } else {
-      html += `<th onclick="sortLeaderboard('${c.key}')">${c.label}${arrow(c.key)}</th>`;
     }
-  }
-  html += `</tr></thead><tbody>`;
 
-  sorted.forEach((v, i) => {
-    const total = v.score_0 + v.score_1 + v.score_2;
-    const p0 = total ? (v.score_0 / total * 100) : 0;
-    const p1 = total ? (v.score_1 / total * 100) : 0;
-    const p2 = total ? (v.score_2 / total * 100) : 0;
-    const sc = v.avg_score >= 1.8 ? "high" : v.avg_score >= 1.2 ? "mid" : "low";
+    /* ── Leaderboard ── */
+    let lbSortCol = "avg_score";
+    let lbSortAsc = false;
 
-    html += `<tr>
+    function renderLeaderboard(lb) {
+      const pairStrength = buildPairwiseStrengthIndex(summary?.comparison_pairs || []);
+      const sorted = [...lb].sort((a, b) => {
+        const va = a[lbSortCol];
+        const vb = b[lbSortCol];
+        if (typeof va === "string" || typeof vb === "string") {
+          const cmp = String(va || "").localeCompare(String(vb || ""), undefined, { numeric: true, sensitivity: "base" });
+          if (cmp !== 0) return lbSortAsc ? cmp : -cmp;
+          const holistic = compareVersionsHolistic(a, b, pairStrength);
+          return lbSortAsc ? -holistic : holistic;
+        }
+
+        const numA = Number(va || 0);
+        const numB = Number(vb || 0);
+        const cmp = lbSortAsc ? numA - numB : numB - numA;
+        if (Math.abs(cmp) > 1e-9) return cmp;
+
+        const holistic = compareVersionsHolistic(a, b, pairStrength);
+        return lbSortAsc ? -holistic : holistic;
+      });
+
+      const arrow = (col) => col === lbSortCol
+        ? `<span class="sort-arrow">${lbSortAsc ? "\u25B2" : "\u25BC"}</span>` : "";
+
+      const cols = [
+        { key: "_rank", label: "#" },
+        { key: "version_id", label: "Version" },
+        { key: "avg_score", label: "Avg Score" },
+        { key: "interrogation_ready_rate", label: "IR Rate" },
+        { key: "scored_count", label: "Graded" },
+        { key: "error_count", label: "Errors" },
+        { key: "_dist", label: "Distribution" },
+      ];
+
+      let html = `<table><thead><tr>`;
+      for (const c of cols) {
+        if (c.key === "_rank" || c.key === "_dist") {
+          html += `<th>${c.label}</th>`;
+        } else {
+          html += `<th onclick="sortLeaderboard('${c.key}')">${c.label}${arrow(c.key)}</th>`;
+        }
+      }
+      html += `</tr></thead><tbody>`;
+
+      sorted.forEach((v, i) => {
+        const total = v.score_0 + v.score_1 + v.score_2;
+        const p0 = total ? (v.score_0 / total * 100) : 0;
+        const p1 = total ? (v.score_1 / total * 100) : 0;
+        const p2 = total ? (v.score_2 / total * 100) : 0;
+        const sc = v.avg_score >= 1.8 ? "high" : v.avg_score >= 1.2 ? "mid" : "low";
+
+        html += `<tr>
       <td class="rank-cell">${i + 1}</td>
       <td><strong>${esc(v.version_id)}</strong></td>
       <td><span class="score-big ${sc}">${fmt(v.avg_score)}</span></td>
@@ -681,97 +2101,614 @@ function renderLeaderboard(lb) {
         </div>
       </td>
     </tr>`;
-  });
+      });
 
-  html += `</tbody></table>`;
-  document.getElementById("leaderboard-wrap").innerHTML = html;
-}
-
-function sortLeaderboard(col) {
-  if (lbSortCol === col) lbSortAsc = !lbSortAsc;
-  else { lbSortCol = col; lbSortAsc = col === "version_id"; }
-  renderLeaderboard(summary.leaderboard);
-}
-
-/* ── Heatmap ── */
-function renderHeatmap(perType, leaderboard) {
-  const versions = Object.keys(perType);
-  if (!versions.length) {
-    document.getElementById("heatmap-grid").innerHTML =
-      `<div class="empty-state">No per-type data available</div>`;
-    return;
-  }
-  const types = [...new Set(versions.flatMap(v => Object.keys(perType[v])))].sort();
-  const numCols = types.length + 1;
-
-  const grid = document.getElementById("heatmap-grid");
-  grid.style.gridTemplateColumns = `160px repeat(${types.length}, 1fr)`;
-  grid.classList.add("heatmap-grid");
-
-  let html = `<div class="heatmap-header"></div>`;
-  for (const t of types) {
-    html += `<div class="heatmap-header">${esc(t.replace(/_/g, " "))}</div>`;
-  }
-
-  for (const v of versions) {
-    html += `<div class="heatmap-row-label">${esc(v)}</div>`;
-    for (const t of types) {
-      const val = perType[v][t];
-      const display = val !== undefined ? fmt(val, 2) : "\u2014";
-      const bg = val !== undefined ? heatColor(val) : "#f3f6f4";
-      const fg = val !== undefined && val < 0.8 ? "#fff" : val !== undefined && val < 1.3 ? "#3a2500" : "#0d3b15";
-      html += `<div class="heatmap-cell" style="background:${bg};color:${fg}">${display}</div>`;
+      html += `</tbody></table>`;
+      document.getElementById("leaderboard-wrap").innerHTML = html;
     }
-  }
 
-  grid.innerHTML = html;
-}
+    function sortLeaderboard(col) {
+      if (lbSortCol === col) lbSortAsc = !lbSortAsc;
+      else { lbSortCol = col; lbSortAsc = col === "version_id"; }
+      renderLeaderboard(summary.leaderboard);
+    }
 
-function heatColor(val) {
-  // 0 = red, 1 = amber, 2 = green, interpolated
-  const clamped = Math.max(0, Math.min(2, val));
-  if (clamped <= 1) {
-    const t = clamped;
-    return lerpColor([193, 61, 54], [216, 135, 16], t);
-  } else {
-    const t = clamped - 1;
-    return lerpColor([216, 135, 16], [31, 157, 85], t);
-  }
-}
+    /* ── Graphs ── */
+    function renderPhaseAGraphs(s) {
+      const leaderboard = Array.isArray(s?.leaderboard) ? s.leaderboard : [];
+      const pairs = Array.isArray(s?.comparison_pairs) ? s.comparison_pairs : [];
+      latestLeaderboardRows = leaderboard;
+      latestComparisonPairs = pairs;
 
-function lerpColor(a, b, t) {
-  const r = Math.round(a[0] + (b[0] - a[0]) * t);
-  const g = Math.round(a[1] + (b[1] - a[1]) * t);
-  const bl = Math.round(a[2] + (b[2] - a[2]) * t);
-  return `rgb(${r},${g},${bl})`;
-}
+      const versions = leaderboard.map((row) => String(row.version_id || "")).filter(Boolean);
+      if (!selectedBaselineVersion || !versions.includes(selectedBaselineVersion)) {
+        selectedBaselineVersion = choosePreferredBaselineVersion(leaderboard);
+      }
 
-/* ── Pairwise ── */
-function renderPairwise(pairs) {
-  if (!pairs || !pairs.length) {
-    document.getElementById("pairwise-list").innerHTML =
-      `<div class="empty-state">No pairwise comparison data</div>`;
-    return;
-  }
+      renderBaselineSelector(leaderboard);
+      renderScoreCompositionChart(leaderboard);
+      renderPairwiseMatrixChart(leaderboard, pairs);
+      renderBaselineDeltaChart(leaderboard, pairs, selectedBaselineVersion);
+    }
 
-  let html = "";
-  for (const p of pairs) {
-    const total = p.total || 1;
-    const aPct = (p.a_wins / total * 100).toFixed(1);
-    const tiePct = (p.ties / total * 100).toFixed(1);
-    const bPct = (p.b_wins / total * 100).toFixed(1);
+    function normalizeVersionId(value) {
+      return String(value || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
+    }
 
-    html += `
-    <details class="pair-card">
-      <summary>
+    function choosePreferredBaselineVersion(leaderboard) {
+      const versions = leaderboard
+        .map((row) => String(row.version_id || ""))
+        .filter(Boolean);
+      if (!versions.length) return "";
+
+      const preferredNormalized = ["noprompt", "baseline", "control"];
+      for (const normalized of preferredNormalized) {
+        const found = versions.find((versionId) => normalizeVersionId(versionId) === normalized);
+        if (found) return found;
+      }
+      return [...versions].sort((a, b) => a.localeCompare(b))[0];
+    }
+
+    function renderBaselineSelector(leaderboard) {
+      const selectEl = document.getElementById("baseline-select");
+      if (!selectEl) return;
+
+      const versions = leaderboard
+        .map((row) => String(row.version_id || ""))
+        .filter(Boolean);
+      if (!versions.length) {
+        selectEl.innerHTML = `<option selected>No versions</option>`;
+        selectEl.disabled = true;
+        return;
+      }
+
+      if (!selectedBaselineVersion || !versions.includes(selectedBaselineVersion)) {
+        selectedBaselineVersion = choosePreferredBaselineVersion(leaderboard);
+      }
+
+      selectEl.innerHTML = versions
+        .map((versionId) => `<option value="${esc(versionId)}">${esc(versionId)}</option>`)
+        .join("");
+      if (!versions.includes(selectedBaselineVersion)) {
+        selectedBaselineVersion = versions[0];
+      }
+      selectEl.value = selectedBaselineVersion;
+      selectEl.disabled = versions.length <= 1;
+
+      if (!selectEl.dataset.bound) {
+        selectEl.addEventListener("change", () => {
+          selectedBaselineVersion = selectEl.value;
+          renderBaselineDeltaChart(latestLeaderboardRows, latestComparisonPairs, selectedBaselineVersion);
+        });
+        selectEl.dataset.bound = "1";
+      }
+    }
+
+    function findPairwiseDelta(versionId, baselineVersionId, pairs) {
+      if (versionId === baselineVersionId) {
+        return { edge: 0, winRate: 0.5, tieRate: 0, total: 0 };
+      }
+      for (const pair of pairs) {
+        const versionA = String(pair.version_a || "");
+        const versionB = String(pair.version_b || "");
+        if (!versionA || !versionB) continue;
+        const total = Number(pair.total || (pair.a_wins || 0) + (pair.b_wins || 0) + (pair.ties || 0));
+        if (!total) continue;
+
+        if (versionA === versionId && versionB === baselineVersionId) {
+          const wins = Number(pair.a_wins || 0);
+          const losses = Number(pair.b_wins || 0);
+          const ties = Number(pair.ties || 0);
+          return { edge: (wins - losses) / total, winRate: wins / total, tieRate: ties / total, total };
+        }
+        if (versionB === versionId && versionA === baselineVersionId) {
+          const wins = Number(pair.b_wins || 0);
+          const losses = Number(pair.a_wins || 0);
+          const ties = Number(pair.ties || 0);
+          return { edge: (wins - losses) / total, winRate: wins / total, tieRate: ties / total, total };
+        }
+      }
+      return null;
+    }
+
+    function formatSigned(value, decimals = 2) {
+      const n = Number(value || 0);
+      const sign = n >= 0 ? "+" : "";
+      return `${sign}${n.toFixed(decimals)}`;
+    }
+
+    function baselineDeltaColor(delta, maxAbs) {
+      const clamped = Math.max(-maxAbs, Math.min(maxAbs, Number(delta || 0)));
+      const normalized = maxAbs ? clamped / maxAbs : 0;
+      const neutral = [236, 243, 239];
+      if (normalized >= 0) {
+        return lerpColor(neutral, [31, 157, 85], normalized);
+      }
+      return lerpColor(neutral, [193, 61, 54], Math.abs(normalized));
+    }
+
+    function renderBaselineDeltaChart(leaderboard, pairs, baselineVersionId) {
+      const chartEl = document.getElementById("baseline-delta-chart");
+      const summaryEl = document.getElementById("baseline-delta-summary");
+      if (!chartEl || !summaryEl) return;
+
+      if (!leaderboard.length) {
+        chartEl.innerHTML = `<div class="empty-state" style="padding:14px">No delta data available</div>`;
+        summaryEl.textContent = "";
+        return;
+      }
+
+      const baselineRow = leaderboard.find((row) => String(row.version_id) === baselineVersionId) || leaderboard[0];
+      const baselineId = String(baselineRow.version_id || "");
+      if (selectedBaselineVersion !== baselineId) {
+        selectedBaselineVersion = baselineId;
+        const selectEl = document.getElementById("baseline-select");
+        if (selectEl) selectEl.value = baselineId;
+      }
+
+      const rows = leaderboard.map((row) => {
+        const versionId = String(row.version_id || "");
+        const pairDelta = findPairwiseDelta(versionId, baselineId, pairs);
+        return {
+          versionId,
+          avgDelta: Number(row.avg_score || 0) - Number(baselineRow.avg_score || 0),
+          irDelta: Number(row.interrogation_ready_rate || 0) - Number(baselineRow.interrogation_ready_rate || 0),
+          pairDelta: pairDelta ? pairDelta.edge : null,
+          pairDetail: pairDelta,
+        };
+      });
+
+      const metricDefs = [
+        {
+          key: "avgDelta",
+          label: "Avg Score Δ",
+          maxAbs: 2,
+          format: (value) => formatSigned(value, 2),
+          title: (value) => `Avg score delta ${formatSigned(value, 3)}`,
+        },
+        {
+          key: "irDelta",
+          label: "IR Rate Δ",
+          maxAbs: 1,
+          format: (value) => `${formatSigned(value * 100, 1)}pp`,
+          title: (value) => `Interrogation-ready rate delta ${formatSigned(value * 100, 2)} percentage points`,
+        },
+        {
+          key: "pairDelta",
+          label: "Win Edge Δ",
+          maxAbs: 1,
+          format: (value) => value === null ? "n/a" : `${formatSigned(value * 100, 1)}pp`,
+          title: (value, row) => {
+            if (value === null) return "Pairwise edge delta unavailable (sparse pair data)";
+            if (!row.pairDetail) return "Pairwise edge delta 0.00 percentage points";
+            return `Pairwise edge delta ${formatSigned(value * 100, 2)} percentage points (${row.pairDetail.total} comparisons)`;
+          },
+        },
+      ];
+
+      const leftPad = 190;
+      const rowHeight = 30;
+      const topPad = 42;
+      const colWidth = 170;
+      const colGap = 8;
+      const width = leftPad + (metricDefs.length * (colWidth + colGap)) + 10;
+      const height = topPad + (rows.length * rowHeight) + 18;
+      let headers = "";
+      let cells = "";
+
+      for (let idx = 0; idx < metricDefs.length; idx += 1) {
+        const x = leftPad + idx * (colWidth + colGap) + (colWidth / 2);
+        headers += `<text x="${x}" y="20" text-anchor="middle" font-size="11" fill="#5e716a">${metricDefs[idx].label}</text>`;
+      }
+
+      for (let rowIndex = 0; rowIndex < rows.length; rowIndex += 1) {
+        const row = rows[rowIndex];
+        const y = topPad + rowIndex * rowHeight;
+        const isBaseline = row.versionId === baselineId;
+        headers += `<text x="${leftPad - 8}" y="${y + 13}" text-anchor="end" font-size="11" fill="${isBaseline ? "#0f5f55" : "#31423c"}">${esc(row.versionId)}${isBaseline ? " (baseline)" : ""}</text>`;
+
+        for (let colIndex = 0; colIndex < metricDefs.length; colIndex += 1) {
+          const metric = metricDefs[colIndex];
+          const value = row[metric.key];
+          const x = leftPad + colIndex * (colWidth + colGap);
+          const isMissing = value === null;
+          const fill = isMissing ? "#f3f6f4" : baselineDeltaColor(value, metric.maxAbs);
+          const textColor = isMissing
+            ? "#8a9b95"
+            : Math.abs(Number(value || 0)) > metric.maxAbs * 0.58
+              ? "#ffffff"
+              : "#25322e";
+          const display = metric.format(value, row);
+          const title = metric.title(value, row);
+
+          cells += `
+        <g>
+          <title>${esc(`${row.versionId}: ${title}`)}</title>
+          <rect x="${x}" y="${y}" width="${colWidth}" height="22" rx="8" ry="8" fill="${fill}" stroke="#d8e2dd"></rect>
+          <text x="${x + colWidth / 2}" y="${y + 15}" text-anchor="middle" font-size="11" fill="${textColor}">${display}</text>
+        </g>
+      `;
+        }
+      }
+
+      chartEl.innerHTML = `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="baseline-delta-svg-title baseline-delta-svg-desc">
+      <title id="baseline-delta-svg-title">Metric deltas versus selected baseline</title>
+      <desc id="baseline-delta-svg-desc">Per-version delta table showing average score, interrogation-ready rate, and pairwise win-edge changes versus the selected baseline version.</desc>
+      ${headers}
+      ${cells}
+    </svg>
+  `;
+
+      const noPromptPresent = leaderboard.some((row) => normalizeVersionId(row.version_id) === "noprompt");
+      const bestAvg = rows
+        .filter((row) => row.versionId !== baselineId)
+        .sort((a, b) => b.avgDelta - a.avgDelta)[0];
+      const bestPair = rows
+        .filter((row) => row.versionId !== baselineId && row.pairDelta !== null)
+        .sort((a, b) => b.pairDelta - a.pairDelta)[0];
+      const bits = [`Baseline ${baselineId}`];
+      if (bestAvg) bits.push(`best avg uplift ${bestAvg.versionId} (${formatSigned(bestAvg.avgDelta, 2)})`);
+      if (bestPair) bits.push(`best pairwise edge ${bestPair.versionId} (${formatSigned(bestPair.pairDelta * 100, 1)}pp)`);
+      if (!noPromptPresent) bits.push(`no_prompt absent in this run, so baseline was chosen from available versions`);
+      summaryEl.textContent = `${bits.join(" · ")}.`;
+    }
+
+    function renderScoreCompositionChart(leaderboard) {
+      const chartEl = document.getElementById("score-composition-chart");
+      const summaryEl = document.getElementById("score-composition-summary");
+      if (!chartEl || !summaryEl) return;
+
+      if (!leaderboard.length) {
+        chartEl.innerHTML = `<div class="empty-state" style="padding:14px">No score composition data available</div>`;
+        summaryEl.textContent = "";
+        return;
+      }
+
+      const rows = [...leaderboard].sort((a, b) => Number(b.avg_score || 0) - Number(a.avg_score || 0));
+      const leftPad = 180;
+      const barWidth = 360;
+      const rightPad = 64;
+      const rowHeight = 30;
+      const topPad = 38;
+      const height = topPad + (rows.length * rowHeight) + 18;
+      const width = leftPad + barWidth + rightPad;
+      let body = "";
+
+      for (let i = 0; i < rows.length; i += 1) {
+        const row = rows[i];
+        const total = Number(row.score_0 || 0) + Number(row.score_1 || 0) + Number(row.score_2 || 0);
+        const p0 = total ? Number(row.score_0 || 0) / total : 0;
+        const p1 = total ? Number(row.score_1 || 0) / total : 0;
+        const p2 = total ? Number(row.score_2 || 0) / total : 0;
+        const y = topPad + (i * rowHeight);
+        const h = 18;
+        const seg0 = barWidth * p0;
+        const seg1 = barWidth * p1;
+        const seg2 = barWidth * p2;
+        let x = leftPad;
+
+        body += `<text x="${leftPad - 8}" y="${y + 13}" text-anchor="end" font-size="11" fill="#31423c">${esc(row.version_id)}</text>`;
+        body += `<rect x="${leftPad}" y="${y}" width="${barWidth}" height="${h}" rx="7" ry="7" fill="#f1f4f2" stroke="#d8e0dc"></rect>`;
+        if (seg0 > 0) {
+          body += `<rect x="${x}" y="${y}" width="${seg0}" height="${h}" fill="#c13d36"></rect>`;
+          x += seg0;
+        }
+        if (seg1 > 0) {
+          body += `<rect x="${x}" y="${y}" width="${seg1}" height="${h}" fill="#d88710"></rect>`;
+          x += seg1;
+        }
+        if (seg2 > 0) {
+          body += `<rect x="${x}" y="${y}" width="${seg2}" height="${h}" fill="#1f9d55"></rect>`;
+        }
+        body += `<text x="${leftPad + barWidth + 8}" y="${y + 13}" font-size="11" fill="#31423c">avg ${fmt(row.avg_score, 2)}</text>`;
+      }
+
+      const tickPercents = [0, 25, 50, 75, 100];
+      const ticks = tickPercents.map((p) => {
+        const x = leftPad + (barWidth * (p / 100));
+        return `
+      <line x1="${x}" y1="${topPad - 8}" x2="${x}" y2="${height - 10}" stroke="#e4ebe8" stroke-width="1"></line>
+      <text x="${x}" y="${topPad - 14}" text-anchor="middle" font-size="10" fill="#60716b">${p}%</text>
+    `;
+      }).join("");
+
+      chartEl.innerHTML = `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="score-composition-svg-title score-composition-svg-desc">
+      <title id="score-composition-svg-title">Stacked score composition by version</title>
+      <desc id="score-composition-svg-desc">Each row shows the percentage share of score 0, score 1, and score 2 outcomes for a version.</desc>
+      ${ticks}
+      ${body}
+    </svg>
+  `;
+
+      const top = rows[0];
+      const topTotal = Number(top.score_0 || 0) + Number(top.score_1 || 0) + Number(top.score_2 || 0);
+      const topScore2Share = topTotal ? Number(top.score_2 || 0) / topTotal : 0;
+      summaryEl.textContent = `${top.version_id} currently leads at avg ${fmt(top.avg_score, 2)} with ${pct(topScore2Share)} score-2 share.`;
+    }
+
+    function renderPairwiseMatrixChart(leaderboard, pairs) {
+      const chartEl = document.getElementById("pairwise-matrix-chart");
+      const summaryEl = document.getElementById("pairwise-matrix-summary");
+      if (!chartEl || !summaryEl) return;
+
+      const orderIndex = new Map();
+      leaderboard.forEach((row, idx) => orderIndex.set(String(row.version_id), idx));
+      const versionSet = new Set(leaderboard.map((row) => String(row.version_id)));
+      for (const pair of pairs) {
+        versionSet.add(String(pair.version_a || ""));
+        versionSet.add(String(pair.version_b || ""));
+      }
+      const versions = [...versionSet].filter(Boolean).sort((a, b) => {
+        const ia = orderIndex.has(a) ? orderIndex.get(a) : Number.MAX_SAFE_INTEGER;
+        const ib = orderIndex.has(b) ? orderIndex.get(b) : Number.MAX_SAFE_INTEGER;
+        if (ia !== ib) return ia - ib;
+        return a.localeCompare(b);
+      });
+
+      if (!versions.length) {
+        chartEl.innerHTML = `<div class="empty-state" style="padding:14px">No pairwise matrix data available</div>`;
+        summaryEl.textContent = "";
+        return;
+      }
+
+      const pairIndex = new Map();
+      for (const pair of pairs) {
+        const versionA = String(pair.version_a || "");
+        const versionB = String(pair.version_b || "");
+        const aWins = Number(pair.a_wins || 0);
+        const bWins = Number(pair.b_wins || 0);
+        const ties = Number(pair.ties || 0);
+        const total = Number(pair.total || (aWins + bWins + ties));
+        if (!versionA || !versionB || !total) continue;
+        pairIndex.set(pairKeyFor(versionA, versionB), { winRate: aWins / total, tieRate: ties / total, total });
+        pairIndex.set(pairKeyFor(versionB, versionA), { winRate: bWins / total, tieRate: ties / total, total });
+      }
+
+      const longestLabel = versions.reduce((max, v) => Math.max(max, v.length), 0);
+      const cell = versions.length <= 6 ? 44 : versions.length <= 10 ? 34 : 28;
+      const leftPad = Math.max(120, Math.min(220, 70 + (longestLabel * 6)));
+      const topPad = 96;
+      const gridSize = versions.length * cell;
+      const width = leftPad + gridSize + 50;
+      const height = topPad + gridSize + 12;
+      let labels = "";
+      let cells = "";
+      let best = null;
+
+      for (let row = 0; row < versions.length; row += 1) {
+        const rowVersion = versions[row];
+        const rowY = topPad + (row * cell);
+        labels += `<text x="${leftPad - 8}" y="${rowY + (cell / 2) + 4}" text-anchor="end" font-size="11" fill="#31423c">${esc(rowVersion)}</text>`;
+      }
+
+      for (let col = 0; col < versions.length; col += 1) {
+        const colVersion = versions[col];
+        const x = leftPad + (col * cell) + (cell / 2);
+        const y = topPad - 14;
+        labels += `<text x="${x}" y="${y}" transform="rotate(-38 ${x} ${y})" text-anchor="start" font-size="11" fill="#31423c">${esc(colVersion)}</text>`;
+      }
+
+      for (let row = 0; row < versions.length; row += 1) {
+        const rowVersion = versions[row];
+        for (let col = 0; col < versions.length; col += 1) {
+          const colVersion = versions[col];
+          const x = leftPad + (col * cell);
+          const y = topPad + (row * cell);
+          if (rowVersion === colVersion) {
+            cells += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="#eef2f0" stroke="#dce4df"></rect>`;
+            cells += `<text x="${x + (cell / 2)}" y="${y + (cell / 2) + 4}" text-anchor="middle" font-size="10" fill="#7a8b84">-</text>`;
+            continue;
+          }
+
+          const metric = pairIndex.get(pairKeyFor(rowVersion, colVersion));
+          if (!metric) {
+            cells += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="#f3f6f4" stroke="#e1e8e4"></rect>`;
+            cells += `<text x="${x + (cell / 2)}" y="${y + (cell / 2) + 4}" text-anchor="middle" font-size="9" fill="#90a19b">n/a</text>`;
+            continue;
+          }
+
+          const rate = metric.winRate;
+          const fill = winRateColor(rate);
+          const label = `${Math.round(rate * 100)}%`;
+          const textColor = rate <= 0.2 || rate >= 0.75 ? "#ffffff" : "#2a3431";
+          cells += `
+        <g>
+          <title>${esc(`${rowVersion} vs ${colVersion}: ${pct(rate)} row-win rate, ${pct(metric.tieRate)} ties (${metric.total} comparisons)`)}</title>
+          <rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${fill}" stroke="#d9e2de"></rect>
+          <text x="${x + (cell / 2)}" y="${y + (cell / 2) + 4}" text-anchor="middle" font-size="${cell < 30 ? 9 : 10}" fill="${textColor}">${label}</text>
+        </g>
+      `;
+          if (!best || rate > best.rate) {
+            best = { rowVersion, colVersion, rate, total: metric.total };
+          }
+        }
+      }
+
+      chartEl.innerHTML = `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="pairwise-matrix-svg-title pairwise-matrix-svg-desc">
+      <title id="pairwise-matrix-svg-title">Pairwise row-win rate matrix</title>
+      <desc id="pairwise-matrix-svg-desc">Rows are candidate versions, columns are opponents, and each cell is the row version's win rate in pairwise judgments.</desc>
+      ${labels}
+      ${cells}
+    </svg>
+  `;
+
+      if (versions.length === 1) {
+        summaryEl.textContent = `Only one version is available in this run, so pairwise win-rate cells are not applicable yet.`;
+        return;
+      }
+      if (!best) {
+        summaryEl.textContent = `Pairwise matrix is sparse for this run; missing pair cells are marked n/a.`;
+        return;
+      }
+      summaryEl.textContent = `${best.rowVersion} has the strongest observed row-win rate vs ${best.colVersion}: ${pct(best.rate)} over ${best.total} comparisons.`;
+    }
+
+    function winRateColor(rate) {
+      const clamped = Math.max(0, Math.min(1, rate));
+      if (clamped <= 0.5) {
+        return lerpColor([193, 61, 54], [216, 135, 16], clamped / 0.5);
+      }
+      return lerpColor([216, 135, 16], [31, 157, 85], (clamped - 0.5) / 0.5);
+    }
+
+    /* ── Heatmap ── */
+    function renderHeatmap(perType, leaderboard) {
+      const versions = Object.keys(perType);
+      if (!versions.length) {
+        document.getElementById("heatmap-grid").innerHTML =
+          `<div class="empty-state">No per-type data available</div>`;
+        setHeatmapStatus("");
+        return;
+      }
+      const types = [...new Set(versions.flatMap(v => Object.keys(perType[v])))].sort();
+
+      const grid = document.getElementById("heatmap-grid");
+      grid.style.gridTemplateColumns = `160px repeat(${types.length}, 1fr)`;
+      grid.classList.add("heatmap-grid");
+
+      let html = `<div class="heatmap-header"></div>`;
+      for (const t of types) {
+        html += `<div class="heatmap-header">${esc(t.replace(/_/g, " "))}</div>`;
+      }
+
+      for (const v of versions) {
+        html += `<div class="heatmap-row-label">${esc(v)}</div>`;
+        for (const t of types) {
+          const val = perType[v][t];
+          const display = val !== undefined ? fmt(val, 2) : "\u2014";
+          const bg = val !== undefined ? heatColor(val) : "#f3f6f4";
+          const fg = val !== undefined && val < 0.8 ? "#fff" : val !== undefined && val < 1.3 ? "#3a2500" : "#0d3b15";
+          const clickable = val !== undefined ? " clickable" : "";
+          const attrs = val !== undefined
+            ? ` data-version="${esc(v)}" data-type="${esc(t)}"`
+            : "";
+          html += `<div class="heatmap-cell${clickable}"${attrs} style="background:${bg};color:${fg}">${display}</div>`;
+        }
+      }
+
+      grid.innerHTML = html;
+      setHeatmapStatus("");
+      grid.querySelectorAll(".heatmap-cell.clickable").forEach((cell) => {
+        cell.addEventListener("click", () => {
+          heatmapDrillDown(cell.dataset.version || "", cell.dataset.type || "");
+        });
+      });
+    }
+
+    function heatmapDrillDown(versionId, typeId) {
+      if (!versionId || !typeId) return;
+      if (!gradesData) {
+        pendingHeatmapDrillDown = { versionId, typeId };
+        setHeatmapStatus("Queued drill-down. Waiting for grades to finish loading.", true);
+        if (!gradesLoading) {
+          loadGrades();
+        }
+        return;
+      }
+      applyHeatmapDrillDown(versionId, typeId);
+    }
+
+    function applyHeatmapDrillDown(versionId, typeId) {
+      const versionSelect = document.getElementById("gf-version");
+      const typeSelect = document.getElementById("gf-type");
+      if (!versionSelect || !typeSelect) return false;
+
+      const hasVersion = Array.from(versionSelect.options).some((opt) => opt.value === versionId);
+      const hasType = Array.from(typeSelect.options).some((opt) => opt.value === typeId);
+      if (hasVersion) versionSelect.value = versionId;
+      if (hasType) typeSelect.value = typeId;
+
+      if (!hasVersion && !hasType) {
+        setHeatmapStatus("Selected heatmap cell could not be applied to current grade filters.", false);
+        return false;
+      }
+
+      renderGrades();
+      setHeatmapStatus("");
+      const lostPanel = document.getElementById("lost-panel");
+      if (lostPanel) {
+        lostPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return true;
+    }
+
+    function heatColor(val) {
+      // 0 = red, 1 = amber, 2 = green, interpolated
+      const clamped = Math.max(0, Math.min(2, val));
+      if (clamped <= 1) {
+        const t = clamped;
+        return lerpColor([193, 61, 54], [216, 135, 16], t);
+      } else {
+        const t = clamped - 1;
+        return lerpColor([216, 135, 16], [31, 157, 85], t);
+      }
+    }
+
+    function lerpColor(a, b, t) {
+      const r = Math.round(a[0] + (b[0] - a[0]) * t);
+      const g = Math.round(a[1] + (b[1] - a[1]) * t);
+      const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+      return `rgb(${r},${g},${bl})`;
+    }
+
+    /* ── Pairwise ── */
+    function renderPairwise(pairs) {
+      if (!pairs || !pairs.length) {
+        document.getElementById("pairwise-list").innerHTML =
+          `<div class="empty-state">No pairwise comparison data</div>`;
+        return;
+      }
+
+      pairMetaByKey.clear();
+      let html = "";
+      for (const p of pairs) {
+        const pairKey = pairKeyFor(p.version_a, p.version_b);
+        const domKey = toDomId(pairKey);
+        pairMetaByKey.set(pairKey, {
+          versionA: p.version_a,
+          versionB: p.version_b,
+          label: p.pair || `${p.version_a} vs ${p.version_b}`,
+        });
+
+        if (!pairState.has(pairKey)) {
+          pairState.set(pairKey, {
+            winner: "",
+            type: "",
+            text: "",
+            page: 0,
+            expanded: new Set(),
+            expandedSource: new Set(),
+            pageItems: new Map(),
+          });
+        }
+
+        const total = p.total || 1;
+        const aPct = (p.a_wins / total * 100).toFixed(1);
+        const tiePct = (p.ties / total * 100).toFixed(1);
+        const bPct = (p.b_wins / total * 100).toFixed(1);
+
+        html += `
+    <details class="pair-card" data-pair-key="${esc(pairKey)}">
+      <summary aria-label="Toggle pair details for ${esc(p.version_a)} vs ${esc(p.version_b)}">
         <div class="pair-header" style="width:100%">
           <div>
             <span class="pair-title">${esc(p.version_a)} vs ${esc(p.version_b)}</span>
+            <div class="summary-win-bar">
+              <div class="win-seg a" style="width:${aPct}%"></div>
+              <div class="win-seg tie" style="width:${tiePct}%"></div>
+              <div class="win-seg b" style="width:${bPct}%"></div>
+            </div>
           </div>
-          <div class="pair-stats">
-            <span><strong>${p.a_wins}</strong> ${esc(p.version_a)} wins</span>
-            <span><strong>${p.ties}</strong> ties</span>
-            <span><strong>${p.b_wins}</strong> ${esc(p.version_b)} wins</span>
+          <div class="pair-header-right">
+            <div class="pair-stats">
+              <span><strong>${p.a_wins}</strong> ${esc(p.version_a)} wins</span>
+              <span><strong>${p.ties}</strong> ties</span>
+              <span><strong>${p.b_wins}</strong> ${esc(p.version_b)} wins</span>
+            </div>
+            <span class="pair-expand-indicator" aria-hidden="true">&#9662;</span>
           </div>
         </div>
       </summary>
@@ -781,96 +2718,443 @@ function renderPairwise(pairs) {
           <div class="win-seg tie" style="width:${tiePct}%">${p.ties ? p.ties : ""}</div>
           <div class="win-seg b" style="width:${bPct}%">${p.b_wins ? p.b_wins : ""}</div>
         </div>
-        <div class="cmp-detail-list" id="cmp-detail-${esc(p.pair.replace(/\s/g, "_"))}">
+        <div class="cmp-detail-list" id="cmp-detail-${domKey}">
           <div class="loading" style="font-size:0.82rem">Click to load per-text details</div>
         </div>
       </div>
     </details>`;
-  }
+      }
 
-  document.getElementById("pairwise-list").innerHTML = html;
+      document.getElementById("pairwise-list").innerHTML = html;
+      const pairSearch = document.getElementById("pairwise-global-text");
+      if (pairSearch && pairSearch.value !== sharedTextIdFilter) {
+        pairSearch.value = sharedTextIdFilter;
+      }
+      syncPairTextFilterInputs();
 
-  /* Load detail data on first expand */
-  document.querySelectorAll(".pair-card").forEach(det => {
-    det.addEventListener("toggle", async function handler() {
-      if (!det.open) return;
-      det.removeEventListener("toggle", handler);
-      await loadComparisonDetails();
-      const pair = det.querySelector(".pair-title").textContent;
-      renderPairDetail(pair);
-    });
-  });
-}
+      /* Load detail data on expand */
+      document.querySelectorAll(".pair-card").forEach(det => {
+        det.addEventListener("toggle", async function onToggle() {
+          if (!det.open) return;
+          await Promise.all([loadComparisonDetails(), loadFormalizations()]);
+          const pairKey = det.dataset.pairKey || "";
+          if (pairKey) {
+            renderPairDetailWithFilters(pairKey);
+          }
+        });
+      });
+    }
 
-async function loadComparisonDetails() {
-  if (comparisonsData) return;
-  try {
-    const dir = manifest.comparisons_dir || "comparisons";
-    comparisonsData = await fetchJSONL(`${BASE}/${dir}/comparisons.jsonl`);
-  } catch (e) {
-    comparisonsData = [];
-    console.warn("Could not load comparisons.jsonl:", e);
-  }
-}
+    async function loadComparisonDetails() {
+      if (comparisonsData) return;
+      try {
+        const dir = manifest.comparisons_dir || "comparisons";
+        comparisonsData = await fetchJSONL(`${BASE}/${dir}/comparisons.jsonl`);
+      } catch (e) {
+        comparisonsData = [];
+        console.warn("Could not load comparisons.jsonl:", e);
+      }
+    }
 
-function renderPairDetail(pairLabel) {
-  const va = pairLabel.split(" vs ")[0];
-  const vb = pairLabel.split(" vs ")[1];
-  const items = (comparisonsData || []).filter(c =>
-    (c.version_a === va && c.version_b === vb) ||
-    (c.version_a === vb && c.version_b === va)
-  );
+    async function loadFormalizations() {
+      if (formalizationsData) return;
+      try {
+        formalizationsData = await fetchJSONL(`${BASE}/formalizations.jsonl`);
+        formalizationIndex.clear();
+        textById.clear();
+        for (const row of formalizationsData) {
+          const versionId = String(row.version_id || "");
+          const textId = String(row.text_id || "");
+          const key = pairKeyFor(versionId, textId);
+          if (!versionId || !textId) continue;
+          const current = formalizationIndex.get(key);
+          if (!current || (!current.formalization && row.formalization)) {
+            formalizationIndex.set(key, {
+              formalization: row.formalization || "",
+              error: row.error || "",
+            });
+          }
 
-  const containerId = `cmp-detail-${pairLabel.replace(/\s/g, "_")}`;
-  const el = document.getElementById(containerId);
-  if (!el) return;
+          const sourceText = String(row.text || "");
+          const existingText = textById.get(textId) || "";
+          if (sourceText && (!existingText || existingText === "(source text unavailable)")) {
+            textById.set(textId, sourceText);
+          }
+        }
+      } catch (e) {
+        formalizationsData = [];
+        formalizationIndex.clear();
+        textById.clear();
+        console.warn("Could not load formalizations.jsonl:", e);
+      }
+    }
 
-  if (!items.length) {
-    el.innerHTML = `<div class="empty-state" style="padding:12px">No per-text data found</div>`;
-    return;
-  }
+    function getFormalizationText(versionId, textId) {
+      const key = pairKeyFor(versionId, textId);
+      const row = formalizationIndex.get(key);
+      if (!row) return "(not found)";
+      if (row.error) return `(error: ${row.error})`;
+      return row.formalization || "(empty)";
+    }
 
-  let html = "";
-  for (const c of items) {
-    const wClass = c.winner_normalized === c.version_a ? "a"
-      : c.winner_normalized === c.version_b ? "b" : "tie";
-    const wLabel = c.winner_normalized === "tie" ? "Tie"
-      : c.winner_normalized || c.winner_raw || "?";
+    function getSourceText(textId) {
+      const key = String(textId || "");
+      if (!key) return "(source text unavailable)";
+      return textById.get(key) || "(source text unavailable)";
+    }
 
-    html += `<div class="cmp-item">
+    function ensurePairState(pairKey) {
+      if (!pairState.has(pairKey)) {
+        pairState.set(pairKey, {
+          winner: "",
+          type: "",
+          text: "",
+          page: 0,
+          expanded: new Set(),
+          expandedSource: new Set(),
+          pageItems: new Map(),
+        });
+      }
+      const state = pairState.get(pairKey);
+      if (!(state.pageItems instanceof Map)) {
+        state.pageItems = new Map();
+      }
+      return state;
+    }
+
+    function winnerTypeForItem(item, meta) {
+      if (item.winner_normalized === "tie") return "tie";
+      if (item.winner_normalized === meta.versionA) return "a";
+      if (item.winner_normalized === meta.versionB) return "b";
+      return "tie";
+    }
+
+    function renderPairDetailWithFilters(pairKey) {
+      const meta = pairMetaByKey.get(pairKey);
+      if (!meta) return;
+      const domKey = toDomId(pairKey);
+      const el = document.getElementById(`cmp-detail-${domKey}`);
+      if (!el) return;
+
+      const state = ensurePairState(pairKey);
+      const baseItems = (comparisonsData || []).filter((c) =>
+        c.status === "ok" && pairMatch(c, meta.versionA, meta.versionB)
+      );
+      const types = [...new Set(baseItems.map((c) => c.reasoning_type).filter(Boolean))].sort();
+      const localTextDisabled = Boolean(sharedTextIdFilter);
+      if (localTextDisabled && state.text) {
+        state.text = "";
+      }
+
+      el.innerHTML = `
+    <div class="cmp-filters" id="cmp-controls-${domKey}">
+      <select id="cmp-winner-${domKey}">
+        <option value="">All winners</option>
+        <option value="a">${esc(meta.versionA)} wins</option>
+        <option value="b">${esc(meta.versionB)} wins</option>
+        <option value="tie">Ties</option>
+      </select>
+      <select id="cmp-type-${domKey}">
+        <option value="">All types</option>
+        ${types.map((t) => `<option value="${esc(t)}">${esc(t.replace(/_/g, " "))}</option>`).join("")}
+      </select>
+      <input id="cmp-text-${domKey}" class="cmp-pair-text-filter" type="text" placeholder="Search text_id in this pair" ${localTextDisabled ? "disabled" : ""}>
+      <span class="cmp-filter-note" style="${localTextDisabled ? "" : "display:none"}"></span>
+    </div>
+    <div id="cmp-page-${domKey}"></div>
+  `;
+
+      const winnerEl = document.getElementById(`cmp-winner-${domKey}`);
+      const typeEl = document.getElementById(`cmp-type-${domKey}`);
+      const textEl = document.getElementById(`cmp-text-${domKey}`);
+      if (!winnerEl || !typeEl || !textEl) return;
+
+      winnerEl.value = state.winner || "";
+      typeEl.value = state.type || "";
+      textEl.value = state.text || "";
+      if (localTextDisabled) {
+        textEl.value = "";
+      }
+
+      winnerEl.addEventListener("change", () => updatePairFilter(pairKey, "winner", winnerEl.value));
+      typeEl.addEventListener("change", () => updatePairFilter(pairKey, "type", typeEl.value));
+      textEl.addEventListener("input", () => updatePairFilter(pairKey, "text", textEl.value));
+      syncPairTextFilterInputs();
+
+      renderPairDetailPage(pairKey);
+    }
+
+    function updatePairFilter(pairKey, field, value) {
+      const state = ensurePairState(pairKey);
+      if (field === "text") {
+        state.text = String(value || "").trim().toLowerCase();
+      } else if (field === "winner") {
+        state.winner = value || "";
+      } else if (field === "type") {
+        state.type = value || "";
+      }
+      state.page = 0;
+      renderPairDetailPage(pairKey);
+    }
+
+    function pairPage(pairKey, delta) {
+      const state = ensurePairState(pairKey);
+      const prevPage = state.page;
+      state.page = Math.max(0, state.page + delta);
+      renderPairDetailPage(pairKey);
+      if (state.page !== prevPage) {
+        const domKey = toDomId(pairKey);
+        const detailEl = document.getElementById(`cmp-page-${domKey}`);
+        if (detailEl) {
+          detailEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+
+    function toggleFormalizations(pairKey, sampleId) {
+      const state = ensurePairState(pairKey);
+      if (!sampleId) return;
+      if (state.expanded.has(sampleId)) {
+        state.expanded.delete(sampleId);
+      } else {
+        state.expanded.add(sampleId);
+      }
+      if (!updatePairRowExpansions(pairKey, sampleId)) {
+        renderPairDetailPage(pairKey);
+      }
+    }
+
+    function toggleSourceText(pairKey, sampleId) {
+      const state = ensurePairState(pairKey);
+      if (!sampleId) return;
+      if (state.expandedSource.has(sampleId)) {
+        state.expandedSource.delete(sampleId);
+      } else {
+        state.expandedSource.add(sampleId);
+      }
+      if (!updatePairRowExpansions(pairKey, sampleId)) {
+        renderPairDetailPage(pairKey);
+      }
+    }
+
+    function renderPairSourceSlot(item, open) {
+      if (!open) return "";
+      const sourceText = getSourceText(item.text_id);
+      return `<div class="cmp-source-text">
+    <h5>Original Text</h5>
+    <div class="cmp-form-text">${esc(sourceText)}</div>
+  </div>`;
+    }
+
+    function renderPairFormalizationsSlot(meta, item, open) {
+      if (!open) return "";
+      const formA = getFormalizationText(meta.versionA, item.text_id);
+      const formB = getFormalizationText(meta.versionB, item.text_id);
+      return `<div class="cmp-formalizations">
+    <div class="cmp-form-col">
+      <h5>${esc(meta.versionA)}</h5>
+      <div class="cmp-form-text">${esc(formA)}</div>
+    </div>
+    <div class="cmp-form-col">
+      <h5>${esc(meta.versionB)}</h5>
+      <div class="cmp-form-text">${esc(formB)}</div>
+    </div>
+  </div>`;
+    }
+
+    function updatePairRowExpansions(pairKey, sampleId) {
+      const state = ensurePairState(pairKey);
+      const meta = pairMetaByKey.get(pairKey);
+      if (!meta) return false;
+      const item = state.pageItems.get(sampleId);
+      if (!item) return false;
+
+      const domKey = toDomId(pairKey);
+      const pageEl = document.getElementById(`cmp-page-${domKey}`);
+      if (!pageEl) return false;
+
+      let rowEl = null;
+      pageEl.querySelectorAll(".cmp-item").forEach((node) => {
+        if (node.dataset.sampleId === sampleId) {
+          rowEl = node;
+        }
+      });
+      if (!rowEl) return false;
+
+      const sourceSlot = rowEl.querySelector(".cmp-source-slot");
+      const formalizationsSlot = rowEl.querySelector(".cmp-formalizations-slot");
+      const formalizationsBtn = rowEl.querySelector(".cmp-formalizations-toggle");
+      const sourceOpen = state.expandedSource.has(sampleId);
+      const formalizationsOpen = state.expanded.has(sampleId);
+
+      if (sourceSlot) {
+        sourceSlot.innerHTML = renderPairSourceSlot(item, sourceOpen);
+      }
+      if (formalizationsSlot) {
+        formalizationsSlot.innerHTML = renderPairFormalizationsSlot(meta, item, formalizationsOpen);
+      }
+      if (formalizationsBtn) {
+        formalizationsBtn.textContent = formalizationsOpen ? "Hide Formalizations" : "Show Formalizations";
+      }
+      return true;
+    }
+
+    function renderPairDetailPage(pairKey) {
+      hideCmpHoverTooltip();
+      const meta = pairMetaByKey.get(pairKey);
+      if (!meta) return;
+      const domKey = toDomId(pairKey);
+      const el = document.getElementById(`cmp-page-${domKey}`);
+      if (!el) return;
+      const state = ensurePairState(pairKey);
+
+      let items = (comparisonsData || []).filter((c) =>
+        c.status === "ok" && pairMatch(c, meta.versionA, meta.versionB)
+      );
+
+      if (state.winner) {
+        items = items.filter((c) => winnerTypeForItem(c, meta) === state.winner);
+      }
+      if (state.type) {
+        items = items.filter((c) => c.reasoning_type === state.type);
+      }
+      if (state.text) {
+        items = items.filter((c) =>
+          String(c.text_id || "").toLowerCase().includes(state.text)
+        );
+      }
+      if (sharedTextIdFilter) {
+        items = items.filter((c) =>
+          String(c.text_id || "").toLowerCase().includes(sharedTextIdFilter)
+        );
+      }
+
+      items.sort((a, b) => {
+        const ta = String(a.text_id || "");
+        const tb = String(b.text_id || "");
+        if (ta !== tb) return ta.localeCompare(tb);
+        return String(a.sample_id || "").localeCompare(String(b.sample_id || ""));
+      });
+
+      const totalFiltered = items.length;
+      if (!totalFiltered) {
+        state.page = 0;
+        state.pageItems.clear();
+        el.innerHTML = `<div class="empty-state" style="padding:12px">No per-text data found</div>`;
+        return;
+      }
+
+      const totalPages = Math.max(1, Math.ceil(totalFiltered / PAIR_PAGE_SIZE));
+      state.page = Math.min(state.page, totalPages - 1);
+      const start = state.page * PAIR_PAGE_SIZE;
+      const pageItems = items.slice(start, start + PAIR_PAGE_SIZE);
+      state.pageItems.clear();
+
+      let rowsHtml = "";
+      for (const c of pageItems) {
+        const winnerType = winnerTypeForItem(c, meta);
+        const wClass = winnerType === "a" ? "a" : winnerType === "b" ? "b" : "tie";
+        const wLabel = winnerType === "a"
+          ? meta.versionA
+          : winnerType === "b"
+            ? meta.versionB
+            : "Tie";
+        const sampleId = String(c.sample_id || `${c.text_id}_${c.winner_normalized}`);
+        const isOpen = state.expanded.has(sampleId);
+        const sourceOpen = state.expandedSource.has(sampleId);
+        state.pageItems.set(sampleId, c);
+
+        rowsHtml += `<div class="cmp-item" data-sample-id="${esc(sampleId)}">
       <div class="cmp-meta">
         <span class="cmp-winner ${wClass}">${esc(wLabel)}</span>
-        <span style="color:var(--muted);font-size:0.8rem">${esc(c.text_id || "")} &middot; ${esc(c.reasoning_type || "")}</span>
+        <button
+          type="button"
+          class="cmp-text-id-btn"
+          aria-label="Preview source text for ${esc(c.text_id || "(no text_id)")}"
+          data-pair-key="${esc(pairKey)}"
+          data-sample-id="${esc(sampleId)}"
+          data-text-id="${esc(c.text_id || "")}"
+        >${esc(c.text_id || "(no text_id)")}</button>
+        <span style="color:var(--muted);font-size:0.8rem">${esc(c.reasoning_type || "")}</span>
+        <button
+          type="button"
+          class="cmp-formalizations-toggle"
+          data-pair-key="${esc(pairKey)}"
+          data-sample-id="${esc(sampleId)}"
+        >${isOpen ? "Hide Formalizations" : "Show Formalizations"}</button>
       </div>
-      <div style="color:#3a4944;font-size:0.82rem;line-height:1.45">${esc(c.justification || "")}</div>
+      <div class="cmp-justification">${esc(c.justification || "")}</div>
+      <div class="cmp-source-slot">${renderPairSourceSlot(c, sourceOpen)}</div>
+      <div class="cmp-formalizations-slot">${renderPairFormalizationsSlot(meta, c, isOpen)}</div>
     </div>`;
-  }
+      }
 
-  el.innerHTML = html;
-}
+      el.innerHTML = `
+    ${rowsHtml}
+    <div class="cmp-pagination">
+      <div class="cmp-page-info">
+        Page ${state.page + 1}/${totalPages} &middot; ${totalFiltered} results
+      </div>
+      <div style="display:flex;gap:6px">
+        <button type="button" class="cmp-page-btn" data-pair-key="${esc(pairKey)}" data-delta="-1" ${state.page === 0 ? "disabled" : ""}>Prev</button>
+        <button type="button" class="cmp-page-btn" data-pair-key="${esc(pairKey)}" data-delta="1" ${state.page >= totalPages - 1 ? "disabled" : ""}>Next</button>
+      </div>
+    </div>
+  `;
 
-/* ── Grades / Where Points Were Lost ── */
-async function loadGrades() {
-  try {
-    const dir = manifest.grades_dir || "grades";
-    gradesData = await fetchJSONL(`${BASE}/${dir}/grades.jsonl`);
-  } catch (e) {
-    document.getElementById("grade-list").innerHTML =
-      `<div class="empty-state">Could not load grades.jsonl: ${esc(e.message)}</div>`;
-    return;
-  }
+      el.querySelectorAll(".cmp-formalizations-toggle").forEach((button) => {
+        button.addEventListener("click", () => {
+          toggleFormalizations(button.dataset.pairKey || pairKey, button.dataset.sampleId || "");
+        });
+      });
+      el.querySelectorAll(".cmp-text-id-btn").forEach((button) => {
+        attachCmpHoverTooltip(button);
+        button.addEventListener("click", () => {
+          toggleSourceText(button.dataset.pairKey || pairKey, button.dataset.sampleId || "");
+        });
+      });
+      el.querySelectorAll(".cmp-page-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const delta = Number(button.dataset.delta || 0);
+          pairPage(button.dataset.pairKey || pairKey, delta);
+        });
+      });
+    }
 
-  renderGradeFilters();
-  renderGrades();
-}
+    /* ── Grades / Where Points Were Lost ── */
+    async function loadGrades() {
+      gradesLoading = true;
+      try {
+        const dir = manifest.grades_dir || "grades";
+        gradesData = await fetchJSONL(`${BASE}/${dir}/grades.jsonl`);
+      } catch (e) {
+        gradesLoading = false;
+        setHeatmapStatus("Could not load grades data, so heatmap drill-down is unavailable.", false);
+        document.getElementById("grade-list").innerHTML =
+          `<div class="empty-state">Could not load grades.jsonl: ${esc(e.message)}</div>`;
+        return;
+      }
+      gradesLoading = false;
 
-function renderGradeFilters() {
-  const lost = gradesData.filter(g => g.judge_score < 2 && g.status === "ok");
-  const versions = [...new Set(lost.map(g => g.version_id))].sort();
-  const types = [...new Set(lost.map(g => g.reasoning_type))].sort();
-  const scores = [...new Set(lost.map(g => g.judge_score))].sort();
+      renderGradeFilters();
+      renderGrades();
 
-  let html = `
+      if (pendingHeatmapDrillDown) {
+        const pending = pendingHeatmapDrillDown;
+        pendingHeatmapDrillDown = null;
+        applyHeatmapDrillDown(pending.versionId, pending.typeId);
+      } else {
+        setHeatmapStatus("");
+      }
+    }
+
+    function renderGradeFilters() {
+      const lost = gradesData.filter(g => g.judge_score < 2 && g.status === "ok");
+      const versions = [...new Set(lost.map(g => g.version_id))].sort();
+      const types = [...new Set(lost.map(g => g.reasoning_type))].sort();
+      const scores = [...new Set(lost.map(g => g.judge_score))].sort();
+
+      let html = `
     <select id="gf-version" onchange="renderGrades()">
       <option value="">All versions</option>
       ${versions.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("")}
@@ -883,33 +3167,50 @@ function renderGradeFilters() {
       <option value="">All scores &lt; 2</option>
       ${scores.map(s => `<option value="${s}">Score ${s}</option>`).join("")}
     </select>
+    <input id="gf-text-id" type="text" placeholder="Search text_id" value="${esc(sharedTextIdFilter)}">
+    <span id="grade-result-count" class="result-count">0 results</span>
   `;
-  document.getElementById("grade-filters").innerHTML = html;
-}
+      document.getElementById("grade-filters").innerHTML = html;
+      const textInput = document.getElementById("gf-text-id");
+      if (textInput) {
+        textInput.addEventListener("input", () => {
+          setSharedTextIdFilter(textInput.value, "grades");
+        });
+      }
+    }
 
-function renderGrades() {
-  const vf = document.getElementById("gf-version")?.value || "";
-  const tf = document.getElementById("gf-type")?.value || "";
-  const sf = document.getElementById("gf-score")?.value || "";
+    function renderGrades() {
+      const vf = document.getElementById("gf-version")?.value || "";
+      const tf = document.getElementById("gf-type")?.value || "";
+      const sf = document.getElementById("gf-score")?.value || "";
+      const textFilter = sharedTextIdFilter;
 
-  let rows = gradesData.filter(g => g.judge_score < 2 && g.status === "ok");
-  if (vf) rows = rows.filter(g => g.version_id === vf);
-  if (tf) rows = rows.filter(g => g.reasoning_type === tf);
-  if (sf !== "") rows = rows.filter(g => String(g.judge_score) === sf);
+      let rows = gradesData.filter(g => g.judge_score < 2 && g.status === "ok");
+      if (vf) rows = rows.filter(g => g.version_id === vf);
+      if (tf) rows = rows.filter(g => g.reasoning_type === tf);
+      if (sf !== "") rows = rows.filter(g => String(g.judge_score) === sf);
+      if (textFilter) {
+        rows = rows.filter((g) =>
+          String(g.text_id || "").toLowerCase().includes(textFilter)
+        );
+      }
 
-  if (!rows.length) {
-    document.getElementById("grade-list").innerHTML =
-      rows.length === 0 && !vf && !tf && !sf
-        ? `<div class="empty-state">All formalizations scored 2 (interrogation-ready). No points lost!</div>`
-        : `<div class="empty-state">No matching results</div>`;
-    return;
-  }
+      const countEl = document.getElementById("grade-result-count");
+      if (countEl) countEl.textContent = `${rows.length} results`;
 
-  rows.sort((a, b) => a.judge_score - b.judge_score || a.version_id.localeCompare(b.version_id));
+      if (!rows.length) {
+        document.getElementById("grade-list").innerHTML =
+          rows.length === 0 && !vf && !tf && !sf && !textFilter
+            ? `<div class="empty-state">All formalizations scored 2 (interrogation-ready). No points lost!</div>`
+            : `<div class="empty-state">No matching results</div>`;
+        return;
+      }
 
-  let html = "";
-  for (const g of rows) {
-    html += `
+      rows.sort((a, b) => a.judge_score - b.judge_score || a.version_id.localeCompare(b.version_id));
+
+      let html = "";
+      for (const g of rows) {
+        html += `
     <details class="grade-card">
       <summary>
         <span class="score-badge s${g.judge_score}">${g.judge_score}</span>
@@ -928,13 +3229,14 @@ function renderGrades() {
         <div class="formalization-text">${esc(g.formalization || "")}</div>
       </div>
     </details>`;
-  }
+      }
 
-  document.getElementById("grade-list").innerHTML = html;
-}
+      document.getElementById("grade-list").innerHTML = html;
+    }
 
-/* ── Init ── */
-boot();
-</script>
+    /* ── Init ── */
+    boot();
+  </script>
 </body>
+
 </html>

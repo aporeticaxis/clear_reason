@@ -238,6 +238,181 @@ def build_sample_id(*, run_id: str, text_id: str, version_id: str, run_index: in
     return f"{run_slug}__{text_id}__{version_key}__run{run_index}"
 
 
+PROGRESS_PHASE_ORDER = ("collect", "grade", "compare", "aggregate")
+
+
+def _default_phase_progress() -> dict[str, Any]:
+    return {
+        "status": "pending",
+        "total": 0,
+        "completed": 0,
+        "checkpointed": 0,
+        "errors": 0,
+        "percent": 0.0,
+        "elapsed_seconds": 0.0,
+        "eta_seconds": None,
+        "throughput_per_min": None,
+        "started_at_utc": None,
+        "finished_at_utc": None,
+        "updated_at_utc": None,
+        "message": "",
+    }
+
+
+def _default_progress_state() -> dict[str, Any]:
+    return {
+        "schema_version": 1,
+        "pipeline_status": "pending",
+        "active_phase": "",
+        "run_id": "",
+        "run_dir": "",
+        "updated_at_utc": utc_now_iso(),
+        "phases": {
+            phase: _default_phase_progress()
+            for phase in PROGRESS_PHASE_ORDER
+        },
+    }
+
+
+def _load_progress_state(path: pathlib.Path) -> dict[str, Any]:
+    state = _default_progress_state()
+    if not path.exists():
+        return state
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            loaded = json.load(handle)
+    except (json.JSONDecodeError, OSError):
+        return state
+    if not isinstance(loaded, dict):
+        return state
+
+    for key in ("schema_version", "pipeline_status", "active_phase", "run_id", "run_dir", "updated_at_utc"):
+        if key in loaded:
+            state[key] = loaded[key]
+
+    loaded_phases = loaded.get("phases")
+    if isinstance(loaded_phases, dict):
+        for phase in PROGRESS_PHASE_ORDER:
+            existing = loaded_phases.get(phase)
+            if isinstance(existing, dict):
+                merged = _default_phase_progress()
+                merged.update(existing)
+                state["phases"][phase] = merged
+
+    return state
+
+
+def _write_json_atomic(path: pathlib.Path, payload: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = path.with_suffix(path.suffix + ".tmp")
+    with tmp_path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=False, indent=2)
+        handle.write("\n")
+    os.replace(tmp_path, path)
+
+
+def resolve_progress_file(path_value: str) -> pathlib.Path | None:
+    raw = path_value.strip() if path_value else ""
+    if not raw:
+        raw = os.environ.get("CLEAR_REASON_PROGRESS_FILE", "").strip()
+    if not raw:
+        return None
+    return pathlib.Path(raw)
+
+
+def _derive_pipeline_status(phases: dict[str, dict[str, Any]]) -> str:
+    statuses = [str(p.get("status", "pending")) for p in phases.values()]
+    if any(status == "running" for status in statuses):
+        return "running"
+    if any(status == "error" for status in statuses):
+        return "error"
+    if statuses and all(status == "done" for status in statuses):
+        return "done"
+    if any(status == "done" for status in statuses):
+        return "running"
+    return "pending"
+
+
+def _calc_progress_metrics(
+    *,
+    total: int,
+    completed: int,
+    checkpointed: int,
+    started_perf: float,
+) -> tuple[float, float | None, float | None]:
+    elapsed_seconds = max(0.0, time.perf_counter() - started_perf)
+    processed = max(0, completed - checkpointed)
+    if elapsed_seconds <= 0.0 or processed <= 0:
+        return elapsed_seconds, None, None
+
+    rate_per_second = processed / elapsed_seconds
+    throughput_per_min = round(rate_per_second * 60.0, 3)
+    remaining = max(0, total - completed)
+    eta_seconds = round(remaining / rate_per_second, 2)
+    return elapsed_seconds, throughput_per_min, eta_seconds
+
+
+def emit_phase_progress(
+    *,
+    progress_file: pathlib.Path | None,
+    phase: str,
+    status: str,
+    total: int,
+    completed: int,
+    checkpointed: int,
+    errors: int,
+    started_at_utc: str,
+    started_perf: float,
+    run_id: str = "",
+    run_dir: str = "",
+    message: str = "",
+) -> None:
+    if not progress_file:
+        return
+    state = _load_progress_state(progress_file)
+    now = utc_now_iso()
+    phase_state = state["phases"].setdefault(phase, _default_phase_progress())
+    elapsed_seconds, throughput_per_min, eta_seconds = _calc_progress_metrics(
+        total=total,
+        completed=completed,
+        checkpointed=checkpointed,
+        started_perf=started_perf,
+    )
+
+    percent = round((completed / total) * 100.0, 2) if total > 0 else 100.0
+    phase_state.update(
+        {
+            "status": status,
+            "total": total,
+            "completed": completed,
+            "checkpointed": checkpointed,
+            "errors": errors,
+            "percent": percent,
+            "elapsed_seconds": round(elapsed_seconds, 2),
+            "eta_seconds": eta_seconds,
+            "throughput_per_min": throughput_per_min,
+            "started_at_utc": started_at_utc,
+            "updated_at_utc": now,
+            "message": message or "",
+        }
+    )
+
+    if status in ("done", "error"):
+        phase_state["finished_at_utc"] = now
+    else:
+        phase_state["finished_at_utc"] = None
+
+    if run_id:
+        state["run_id"] = run_id
+    if run_dir:
+        state["run_dir"] = run_dir
+
+    state["active_phase"] = phase if status == "running" else ""
+    state["pipeline_status"] = _derive_pipeline_status(state["phases"])
+    state["updated_at_utc"] = now
+    _write_json_atomic(progress_file, state)
+
+
 # --- Claude CLI wrapper ---
 
 def run_claude(
@@ -540,6 +715,25 @@ def run_collect(args: argparse.Namespace) -> int:
 
     total = len(tasks)
     completed = len(checkpoint_ids)
+    phase_error_count = 0
+    phase_started_at = utc_now_iso()
+    phase_started_perf = time.perf_counter()
+    progress_file = resolve_progress_file(args.progress_file)
+
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="collect",
+        status="running",
+        total=total,
+        completed=completed,
+        checkpointed=len(checkpoint_ids),
+        errors=phase_error_count,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_id,
+        run_dir=str(run_dir),
+        message="Collecting formalizations",
+    )
 
     if args.dry_run:
         print(f"DRY RUN: {len(tasks_to_run)} tasks to process "
@@ -547,6 +741,20 @@ def run_collect(args: argparse.Namespace) -> int:
               flush=True)
         if args.dry_run and not tasks_to_run:
             print("Nothing to do (all checkpointed).", flush=True)
+            emit_phase_progress(
+                progress_file=progress_file,
+                phase="collect",
+                status="done",
+                total=total,
+                completed=completed,
+                checkpointed=len(checkpoint_ids),
+                errors=phase_error_count,
+                started_at_utc=phase_started_at,
+                started_perf=phase_started_perf,
+                run_id=run_id,
+                run_dir=str(run_dir),
+                message="Collect complete",
+            )
             return 0
 
     parallelism = collect_cfg.get("parallelism", 1)
@@ -582,6 +790,8 @@ def run_collect(args: argparse.Namespace) -> int:
                 records.append(record)
                 append_jsonl(partial_path, record)
                 status = record["status"]
+                if status == "error":
+                    phase_error_count += 1
                 error_suffix = (
                     f" error={record['error']}" if status == "error" else ""
                 )
@@ -590,6 +800,23 @@ def run_collect(args: argparse.Namespace) -> int:
                     f"version={record['version_id']} text={record['text_id']} "
                     f"run={record['run_index']}{error_suffix}",
                     flush=True,
+                )
+                emit_phase_progress(
+                    progress_file=progress_file,
+                    phase="collect",
+                    status="running",
+                    total=total,
+                    completed=completed,
+                    checkpointed=len(checkpoint_ids),
+                    errors=phase_error_count,
+                    started_at_utc=phase_started_at,
+                    started_perf=phase_started_perf,
+                    run_id=run_id,
+                    run_dir=str(run_dir),
+                    message=(
+                        f"{record['version_id']} / {record['text_id']} "
+                        f"(run {record['run_index']})"
+                    ),
                 )
 
     all_records: list[dict[str, Any]] = []
@@ -613,6 +840,21 @@ def run_collect(args: argparse.Namespace) -> int:
     print(f"\nCollection complete. {len(all_records)} records, "
           f"{error_count} errors.", flush=True)
     print(f"Artifacts: {run_dir}", flush=True)
+
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="collect",
+        status="error" if error_count > 0 else "done",
+        total=total,
+        completed=completed,
+        checkpointed=len(checkpoint_ids),
+        errors=error_count,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_id,
+        run_dir=str(run_dir),
+        message="Collect complete",
+    )
 
     if error_count > 0 and args.fail_on_error:
         return 2
@@ -761,6 +1003,25 @@ def run_grade(args: argparse.Namespace) -> int:
 
     total = len(rows)
     completed = len(checkpoint_ids)
+    phase_error_count = 0
+    phase_started_at = utc_now_iso()
+    phase_started_perf = time.perf_counter()
+    progress_file = resolve_progress_file(args.progress_file)
+
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="grade",
+        status="running",
+        total=total,
+        completed=completed,
+        checkpointed=len(checkpoint_ids),
+        errors=phase_error_count,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_dir.name,
+        run_dir=str(run_dir),
+        message="Grading formalizations",
+    )
 
     parallelism = grade_cfg.get("parallelism", config.get("collect", {}).get("parallelism", 1))
     print(f"Grading: {len(rows_to_grade)} rows "
@@ -792,6 +1053,8 @@ def run_grade(args: argparse.Namespace) -> int:
                 completed += 1
                 append_jsonl(partial_path, grade_row)
                 status = grade_row["status"]
+                if status == "error":
+                    phase_error_count += 1
                 score_str = str(grade_row.get("judge_score", "?"))
                 error_suffix = (
                     f" error={grade_row['error']}" if status == "error" else ""
@@ -801,6 +1064,23 @@ def run_grade(args: argparse.Namespace) -> int:
                     f"version={grade_row['version_id']} "
                     f"text={grade_row['text_id']}{error_suffix}",
                     flush=True,
+                )
+                emit_phase_progress(
+                    progress_file=progress_file,
+                    phase="grade",
+                    status="running",
+                    total=total,
+                    completed=completed,
+                    checkpointed=len(checkpoint_ids),
+                    errors=phase_error_count,
+                    started_at_utc=phase_started_at,
+                    started_perf=phase_started_perf,
+                    run_id=run_dir.name,
+                    run_dir=str(run_dir),
+                    message=(
+                        f"{grade_row['version_id']} / {grade_row['text_id']} "
+                        f"score={score_str}"
+                    ),
                 )
 
     all_grades: list[dict[str, Any]] = []
@@ -820,6 +1100,21 @@ def run_grade(args: argparse.Namespace) -> int:
     print(f"\nGrading complete. {len(all_grades)} rows, {error_count} errors.",
           flush=True)
     print(f"Artifacts: {grade_run_dir}", flush=True)
+
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="grade",
+        status="error" if error_count > 0 else "done",
+        total=total,
+        completed=completed,
+        checkpointed=len(checkpoint_ids),
+        errors=error_count,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_dir.name,
+        run_dir=str(run_dir),
+        message="Grade complete",
+    )
 
     if error_count > 0 and args.fail_on_error:
         return 2
@@ -959,20 +1254,42 @@ def run_compare(args: argparse.Namespace) -> int:
                 "reasoning_type": row_a.get("reasoning_type", ""),
             })
 
-    total = len(tasks)
+    total = len(tasks) + len(checkpoint_ids)
+    completed = len(checkpoint_ids)
+    phase_error_count = 0
+    phase_started_at = utc_now_iso()
+    phase_started_perf = time.perf_counter()
+    progress_file = resolve_progress_file(args.progress_file)
+
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="compare",
+        status="running",
+        total=total,
+        completed=completed,
+        checkpointed=len(checkpoint_ids),
+        errors=phase_error_count,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_dir.name,
+        run_dir=str(run_dir),
+        message="Running pairwise comparisons",
+    )
+
     parallelism = (
         args.parallelism
         or compare_cfg.get("parallelism")
         or config.get("collect", {}).get("parallelism", 1)
     )
     print(
-        f"Comparing: {total} tasks across {len(pairs)} pairs "
+        f"Comparing: {len(tasks)} tasks "
+        f"({total} total, {len(checkpoint_ids)} checkpointed, "
+        f"across {len(pairs)} pairs, "
         f"(parallelism={parallelism})",
         flush=True,
     )
 
     io_lock = threading.Lock()
-    completed = 0
 
     def _process_compare(task: dict[str, Any]) -> dict[str, Any]:
         # Randomize presentation order
@@ -1064,6 +1381,8 @@ def run_compare(args: argparse.Namespace) -> int:
                 completed += 1
                 append_jsonl(partial_path, result)
                 status = result["status"]
+                if status == "error":
+                    phase_error_count += 1
                 winner = result.get("winner_normalized", "?")
                 error_suffix = (
                     f" error={result['error']}" if status == "error" else ""
@@ -1073,6 +1392,23 @@ def run_compare(args: argparse.Namespace) -> int:
                     f"{task['version_a']} vs {task['version_b']} "
                     f"text={task['text_id']} winner={winner}{error_suffix}",
                     flush=True,
+                )
+                emit_phase_progress(
+                    progress_file=progress_file,
+                    phase="compare",
+                    status="running",
+                    total=total,
+                    completed=completed,
+                    checkpointed=len(checkpoint_ids),
+                    errors=phase_error_count,
+                    started_at_utc=phase_started_at,
+                    started_perf=phase_started_perf,
+                    run_id=run_dir.name,
+                    run_dir=str(run_dir),
+                    message=(
+                        f"{task['version_a']} vs {task['version_b']} "
+                        f"/ {task['text_id']} -> {winner}"
+                    ),
                 )
 
     all_comparisons: list[dict[str, Any]] = []
@@ -1087,9 +1423,26 @@ def run_compare(args: argparse.Namespace) -> int:
 
     summary = summarize_comparisons(all_comparisons)
     write_json(compare_run_dir / "compare_summary.json", summary)
+    error_count = sum(1 for row in all_comparisons if row.get("error"))
 
     print(f"\nComparison complete. {len(all_comparisons)} rows.", flush=True)
     print(f"Artifacts: {compare_run_dir}", flush=True)
+
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="compare",
+        status="error" if error_count > 0 else "done",
+        total=total,
+        completed=completed,
+        checkpointed=len(checkpoint_ids),
+        errors=error_count,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_dir.name,
+        run_dir=str(run_dir),
+        message="Compare complete",
+    )
+
     return 0
 
 
@@ -1157,102 +1510,153 @@ def run_aggregate(args: argparse.Namespace) -> int:
     if not run_dir.exists():
         raise FileNotFoundError(f"Run directory not found: {run_dir}")
 
-    grades_path = None
-    grades_rel = None
-    grade_dirs = sorted((run_dir / "grades").iterdir()) if (run_dir / "grades").exists() else []
-    for gd in grade_dirs:
-        candidate = gd / "grades.jsonl"
-        if candidate.exists():
-            grades_path = candidate
-            grades_rel = str(gd.relative_to(run_dir))
-            break
-    if not grades_path:
-        raise FileNotFoundError("No grades.jsonl found in run directory.")
+    progress_file = resolve_progress_file(args.progress_file)
+    phase_started_at = utc_now_iso()
+    phase_started_perf = time.perf_counter()
+    phase_total = 1
 
-    grade_rows = read_jsonl(grades_path)
-    grade_summary = summarize_grades(grade_rows)
+    emit_phase_progress(
+        progress_file=progress_file,
+        phase="aggregate",
+        status="running",
+        total=phase_total,
+        completed=0,
+        checkpointed=0,
+        errors=0,
+        started_at_utc=phase_started_at,
+        started_perf=phase_started_perf,
+        run_id=run_dir.name,
+        run_dir=str(run_dir),
+        message="Building aggregate summary",
+    )
 
-    compare_summary: dict[str, Any] = {}
-    comparisons_rel = None
-    compare_dirs = sorted(
-        (run_dir / "comparisons").iterdir()
-    ) if (run_dir / "comparisons").exists() else []
-    for cd in compare_dirs:
-        candidate = cd / "comparisons.jsonl"
-        if candidate.exists():
-            compare_rows = read_jsonl(candidate)
-            compare_summary = summarize_comparisons(compare_rows)
-            comparisons_rel = str(cd.relative_to(run_dir))
-            break
+    try:
+        grades_path = None
+        grades_rel = None
+        grade_dirs = sorted((run_dir / "grades").iterdir()) if (run_dir / "grades").exists() else []
+        for gd in grade_dirs:
+            candidate = gd / "grades.jsonl"
+            if candidate.exists():
+                grades_path = candidate
+                grades_rel = str(gd.relative_to(run_dir))
+                break
+        if not grades_path:
+            raise FileNotFoundError("No grades.jsonl found in run directory.")
 
-    ablation_impact: list[dict[str, Any]] = []
-    if compare_summary.get("pair_summaries"):
-        for pair in compare_summary["pair_summaries"]:
-            vb = pair.get("version_b", "")
-            if vb.startswith("v3_no_"):
-                section = vb.replace("v3_no_", "")
-                ablation_impact.append({
-                    "section": section,
-                    "version_a": pair["version_a"],
-                    "version_b": pair["version_b"],
-                    "a_wins": pair["a_wins"],
-                    "b_wins": pair["b_wins"],
-                    "ties": pair["ties"],
-                    "total": pair["total"],
-                    "avg_score": pair["avg_score"],
-                    "net_impact": pair["a_wins"] - pair["b_wins"],
-                    "impact_label": (
-                        "section helps" if pair["a_wins"] > pair["b_wins"]
-                        else "section hurts" if pair["b_wins"] > pair["a_wins"]
-                        else "no net effect"
-                    ),
-                })
+        grade_rows = read_jsonl(grades_path)
+        grade_summary = summarize_grades(grade_rows)
 
-    per_type: dict[str, dict[str, float]] = {}
-    for entry in grade_summary.get("leaderboard", []):
-        vid = entry["version_id"]
-        per_type[vid] = entry.get("type_breakdown", {})
+        compare_summary: dict[str, Any] = {}
+        comparisons_rel = None
+        compare_dirs = sorted(
+            (run_dir / "comparisons").iterdir()
+        ) if (run_dir / "comparisons").exists() else []
+        for cd in compare_dirs:
+            candidate = cd / "comparisons.jsonl"
+            if candidate.exists():
+                compare_rows = read_jsonl(candidate)
+                compare_summary = summarize_comparisons(compare_rows)
+                comparisons_rel = str(cd.relative_to(run_dir))
+                break
 
-    aggregate = {
-        "leaderboard": grade_summary.get("leaderboard", []),
-        "per_type_breakdown": per_type,
-        "comparison_pairs": compare_summary.get("pair_summaries", []),
-        "ablation_impact": ablation_impact,
-        "total_formalizations": grade_summary.get("total_records", 0),
-        "total_comparisons": compare_summary.get("total_comparisons", 0),
-    }
+        ablation_impact: list[dict[str, Any]] = []
+        if compare_summary.get("pair_summaries"):
+            for pair in compare_summary["pair_summaries"]:
+                vb = pair.get("version_b", "")
+                if vb.startswith("v3_no_"):
+                    section = vb.replace("v3_no_", "")
+                    ablation_impact.append({
+                        "section": section,
+                        "version_a": pair["version_a"],
+                        "version_b": pair["version_b"],
+                        "a_wins": pair["a_wins"],
+                        "b_wins": pair["b_wins"],
+                        "ties": pair["ties"],
+                        "total": pair["total"],
+                        "avg_score": pair["avg_score"],
+                        "net_impact": pair["a_wins"] - pair["b_wins"],
+                        "impact_label": (
+                            "section helps" if pair["a_wins"] > pair["b_wins"]
+                            else "section hurts" if pair["b_wins"] > pair["a_wins"]
+                            else "no net effect"
+                        ),
+                    })
 
-    agg_dir = run_dir / "aggregate"
-    agg_dir.mkdir(parents=True, exist_ok=True)
-    write_json(agg_dir / "aggregate_summary.json", aggregate)
+        per_type: dict[str, dict[str, float]] = {}
+        for entry in grade_summary.get("leaderboard", []):
+            vid = entry["version_id"]
+            per_type[vid] = entry.get("type_breakdown", {})
 
-    # Leaderboard CSV
-    _write_leaderboard_csv(agg_dir / "leaderboard.csv", grade_summary.get("leaderboard", []))
+        aggregate = {
+            "leaderboard": grade_summary.get("leaderboard", []),
+            "per_type_breakdown": per_type,
+            "comparison_pairs": compare_summary.get("pair_summaries", []),
+            "ablation_impact": ablation_impact,
+            "total_formalizations": grade_summary.get("total_records", 0),
+            "total_comparisons": compare_summary.get("total_comparisons", 0),
+        }
 
-    # Run manifest for the viewer (subdirectory discovery)
-    manifest = {"run_id": run_dir.name}
-    if grades_rel:
-        manifest["grades_dir"] = grades_rel
-    if comparisons_rel:
-        manifest["comparisons_dir"] = comparisons_rel
-    write_json(run_dir / "run_manifest.json", manifest)
+        agg_dir = run_dir / "aggregate"
+        agg_dir.mkdir(parents=True, exist_ok=True)
+        write_json(agg_dir / "aggregate_summary.json", aggregate)
 
-    print(f"Aggregate complete.", flush=True)
-    print(f"Artifacts: {agg_dir}", flush=True)
-    _print_leaderboard(grade_summary.get("leaderboard", []))
+        # Leaderboard CSV
+        _write_leaderboard_csv(agg_dir / "leaderboard.csv", grade_summary.get("leaderboard", []))
 
-    if ablation_impact:
-        print("\nAblation Impact:")
-        for ai in sorted(ablation_impact, key=lambda x: x.get("net_impact", 0), reverse=True):
-            print(
-                f"  {ai['section']:30s}  "
-                f"net={ai['net_impact']:+d}  "
-                f"(full wins {ai['a_wins']}, ablated wins {ai['b_wins']}, "
-                f"ties {ai['ties']})  → {ai['impact_label']}",
-                flush=True,
-            )
+        # Run manifest for the viewer (subdirectory discovery)
+        manifest = {"run_id": run_dir.name}
+        if grades_rel:
+            manifest["grades_dir"] = grades_rel
+        if comparisons_rel:
+            manifest["comparisons_dir"] = comparisons_rel
+        write_json(run_dir / "run_manifest.json", manifest)
 
-    return 0
+        print(f"Aggregate complete.", flush=True)
+        print(f"Artifacts: {agg_dir}", flush=True)
+        _print_leaderboard(grade_summary.get("leaderboard", []))
+
+        if ablation_impact:
+            print("\nAblation Impact:")
+            for ai in sorted(ablation_impact, key=lambda x: x.get("net_impact", 0), reverse=True):
+                print(
+                    f"  {ai['section']:30s}  "
+                    f"net={ai['net_impact']:+d}  "
+                    f"(full wins {ai['a_wins']}, ablated wins {ai['b_wins']}, "
+                    f"ties {ai['ties']})  → {ai['impact_label']}",
+                    flush=True,
+                )
+
+        emit_phase_progress(
+            progress_file=progress_file,
+            phase="aggregate",
+            status="done",
+            total=phase_total,
+            completed=phase_total,
+            checkpointed=0,
+            errors=0,
+            started_at_utc=phase_started_at,
+            started_perf=phase_started_perf,
+            run_id=run_dir.name,
+            run_dir=str(run_dir),
+            message="Aggregate complete",
+        )
+        return 0
+    except Exception as exc:
+        emit_phase_progress(
+            progress_file=progress_file,
+            phase="aggregate",
+            status="error",
+            total=phase_total,
+            completed=phase_total,
+            checkpointed=0,
+            errors=1,
+            started_at_utc=phase_started_at,
+            started_perf=phase_started_perf,
+            run_id=run_dir.name,
+            run_dir=str(run_dir),
+            message=str(exc),
+        )
+        raise
 
 
 def _write_leaderboard_csv(
@@ -1350,6 +1754,11 @@ def parse_args() -> argparse.Namespace:
     collect.add_argument("--fail-on-error", action="store_true", default=True)
     collect.add_argument("--no-fail-on-error", dest="fail_on_error",
                          action="store_false")
+    collect.add_argument(
+        "--progress-file",
+        default="",
+        help="Optional JSON file to receive live phase progress updates.",
+    )
 
     # -- grade --
     grade = subparsers.add_parser(
@@ -1366,6 +1775,11 @@ def parse_args() -> argparse.Namespace:
     grade.add_argument("--fail-on-error", action="store_true", default=True)
     grade.add_argument("--no-fail-on-error", dest="fail_on_error",
                        action="store_false")
+    grade.add_argument(
+        "--progress-file",
+        default="",
+        help="Optional JSON file to receive live phase progress updates.",
+    )
 
     # -- compare --
     compare = subparsers.add_parser(
@@ -1385,6 +1799,11 @@ def parse_args() -> argparse.Namespace:
     compare.add_argument("--fail-on-error", action="store_true", default=True)
     compare.add_argument("--no-fail-on-error", dest="fail_on_error",
                          action="store_false")
+    compare.add_argument(
+        "--progress-file",
+        default="",
+        help="Optional JSON file to receive live phase progress updates.",
+    )
 
     # -- aggregate --
     aggregate = subparsers.add_parser(
@@ -1394,6 +1813,11 @@ def parse_args() -> argparse.Namespace:
     aggregate.add_argument("--config", default="config.json")
     aggregate.add_argument("--run-dir", required=True,
                            help="Path to a collect run directory.")
+    aggregate.add_argument(
+        "--progress-file",
+        default="",
+        help="Optional JSON file to receive live phase progress updates.",
+    )
 
     return parser.parse_args()
 
