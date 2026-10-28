@@ -123,6 +123,55 @@
         "prompts/logic_rules.md"
       ],
       "ablate_section": "deep_audit"
+    },
+    {
+      "id": "v4_2026",
+      "name": "v4 2026 (full)",
+      "type": "version",
+      "system_prompt_file": "prompts/v4_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ]
+    },
+    {
+      "id": "v4_no_inhabitation_discharge",
+      "name": "v4 2026 minus Inhabitation and Discharge",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v4_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "inhabitation_discharge"
+    },
+    {
+      "id": "v4_no_scoped_walks",
+      "name": "v4 2026 minus Scoped Walks (§d.1)",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v4_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "scoped_walks"
+    },
+    {
+      "id": "v4_no_default_determination",
+      "name": "v4 2026 minus Default Determination (tiebreakers)",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v4_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "default_determination"
+    },
+    {
+      "id": "v4_no_branch_indexed_verdicts",
+      "name": "v4 2026 minus Branch-indexed Verdicts",
+      "type": "ablation",
+      "system_prompt_file": "prompts/v4_2026.md",
+      "knowledge_files": [
+        "prompts/logic_rules.md"
+      ],
+      "ablate_section": "branch_indexed_verdicts"
     }
   ],
   "ablation_headers": {
@@ -134,6 +183,9 @@
     "default_determination": "**Default Determination**",
     "exformation_inventory": "### Exformation Inventory",
     "circumference_check": "**Circumference Check**:",
-    "deep_audit": "**Deep Audit**"
+    "deep_audit": "**Deep Audit**",
+    "inhabitation_discharge": "**Inhabitation and Discharge**:",
+    "scoped_walks": "### d.1 Scoped Walks",
+    "branch_indexed_verdicts": "**Branch-indexed verdicts**:"
   }
 }

@@ -28,7 +28,17 @@ ABLATION_HEADERS = {
     "exformation_inventory": "### Exformation Inventory",
     "circumference_check": "**Circumference Check**:",
     "deep_audit": "**Deep Audit**",
+    # v4 additions
+    "inhabitation_discharge": "**Inhabitation and Discharge**:",
+    "scoped_walks": "### d.1 Scoped Walks",
+    "branch_indexed_verdicts": "**Branch-indexed verdicts**:",
 }
+
+# Sections removed as a whole block: from the header down to the next
+# markdown header of the same or higher level, taking any **Bold**:
+# sub-headers inside it along.  Used for sections whose body is itself
+# organised under bold sub-headers (e.g. §d.1's Trigger / Protocol).
+BLOCK_ABLATIONS = {"scoped_walks"}
 
 
 def _header_level(line: str) -> int | None:
@@ -47,7 +57,9 @@ def _header_level(line: str) -> int | None:
     return None
 
 
-def ablate_section(prompt_text: str, section_header: str) -> str:
+def ablate_section(
+    prompt_text: str, section_header: str, whole_block: bool = False
+) -> str:
     """Remove a named section from the prompt text.
 
     A "section" is one contiguous block: the header line and all
@@ -59,10 +71,15 @@ def ablate_section(prompt_text: str, section_header: str) -> str:
     Header detection: ``### ...`` markdown headers and ``**Bold**:``
     patterns at the start of a line are both recognised as headers.
 
+    With *whole_block*, the section instead runs to the next markdown
+    header of the same or higher level, so bold sub-headers inside it
+    are removed with it.
+
     Args:
         prompt_text: The full markdown prompt as a string.
         section_header: The literal header text that starts the section
             to remove (e.g. ``"**Deep Audit**"``).
+        whole_block: Remove sub-headers too (see above).
 
     Returns:
         The prompt text with the target section removed and any
@@ -91,8 +108,14 @@ def ablate_section(prompt_text: str, section_header: str) -> str:
     # swallow subordinate headers (like **Bold**:) that are actually
     # separate ablation targets.
     end_idx = len(lines)
+    start_md = re.match(r"^(#{1,6})\s", lines[start_idx])
     for i in range(start_idx + 1, len(lines)):
-        if _header_level(lines[i]) is not None:
+        if whole_block and start_md:
+            md = re.match(r"^(#{1,6})\s", lines[i])
+            if md and len(md.group(1)) <= len(start_md.group(1)):
+                end_idx = i
+                break
+        elif _header_level(lines[i]) is not None:
             end_idx = i
             break
 
@@ -111,6 +134,14 @@ def ablate_section(prompt_text: str, section_header: str) -> str:
             cleaned.append(line)
 
     return "\n".join(cleaned)
+
+
+def ablate_by_id(prompt_text: str, section_id: str) -> str:
+    """Remove the section registered under *section_id* from *prompt_text*."""
+    header = ABLATION_HEADERS[section_id]
+    return ablate_section(
+        prompt_text, header, whole_block=section_id in BLOCK_ABLATIONS
+    )
 
 
 def get_ablated_prompt(prompt_path: str, section_id: str) -> str:
@@ -139,8 +170,7 @@ def get_ablated_prompt(prompt_path: str, section_id: str) -> str:
     with open(prompt_path, "r", encoding="utf-8") as fh:
         prompt_text = fh.read()
 
-    header = ABLATION_HEADERS[section_id]
-    return ablate_section(prompt_text, header)
+    return ablate_by_id(prompt_text, section_id)
 
 
 def generate_ablation_file(
@@ -148,8 +178,9 @@ def generate_ablation_file(
 ) -> str:
     """Write an ablated prompt variant to disk.
 
-    The output file is named ``v3_no_<section_id>.md`` inside
-    *output_dir*.
+    The output file is named ``<vN>_no_<section_id>.md`` inside
+    *output_dir*, where ``<vN>`` is the version prefix of the source
+    file name (e.g. ``v4`` for ``v4_2026.md``; ``v3`` if none).
 
     Args:
         prompt_path: Path to the source markdown prompt file.
@@ -162,7 +193,9 @@ def generate_ablation_file(
     ablated = get_ablated_prompt(prompt_path, section_id)
 
     os.makedirs(output_dir, exist_ok=True)
-    filename = f"v3_no_{section_id}.md"
+    prefix_match = re.match(r"^(v\d+)", os.path.basename(prompt_path))
+    prefix = prefix_match.group(1) if prefix_match else "v3"
+    filename = f"{prefix}_no_{section_id}.md"
     out_path = os.path.join(output_dir, filename)
 
     with open(out_path, "w", encoding="utf-8") as fh:

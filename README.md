@@ -33,6 +33,29 @@ Runtime note:
 - The suite executes directly from `test_corpus.json`, `test_corpus_logic_book.json`, and `test_corpus_bullshit.json`.
 - Intermediate extraction artifacts (`logic_book_exercises/`, OCR/PDF refs, conversion helpers) are not required for running the benchmark.
 
+## Prompt Versions
+
+Defined in `prompt_versions.json`; system prompts live in `prompts/`.
+
+- `no_prompt` — baseline, no system prompt
+- `v1_core` — `prompts/v1_core.md`
+- `v10_2025` — `prompts/v10_2025_original.md`
+- `v3_2026` — `prompts/v3_2026.md`, plus `v3_no_*` section ablations
+- `v4_2026` — `prompts/v4_2026.md`, plus `v4_no_*` section ablations
+
+v4 adds scoped walks (inhabit a reading, walk its strongest rival, discharge
+to conditional conclusions), branch-indexed verdicts, a Fork Ledger, and the
+`[IMPLICIT - TEXT]` / `[IMPLICIT - CR]` split. See
+[`docs/v4_changelog.md`](docs/v4_changelog.md) for the full changelog from v3,
+including deployment guidance and the CR bench additions (B1–B5); B2
+(tiebreaker ablation) is the `v4_no_default_determination` variant. The
+changelog is deliberately not a knowledge file for any version. `v3_2026`
+remains the default reference version until v4 replaces it.
+
+Ablation variants remove one section of the prompt via `scripts/ablate.py`
+(`python3 scripts/ablate.py --list`). The `aggregate` phase reports ablation
+impact for any `vN_no_<section>` version compared against its full version.
+
 ## Requirements
 
 - `python3`
@@ -187,6 +210,7 @@ test_corpus.json
 test_corpus_logic_book.json
 test_corpus_bullshit.json
 prompts/
+docs/v4_changelog.md
 scripts/clear_reason_eval.py
 scripts/ablate.py
 scripts/export_console_csv.py

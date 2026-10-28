@@ -28,7 +28,13 @@
       ["v3_2026", "v3_no_default_determination"],
       ["v3_2026", "v3_no_exformation_inventory"],
       ["v3_2026", "v3_no_circumference_check"],
-      ["v3_2026", "v3_no_deep_audit"]
+      ["v3_2026", "v3_no_deep_audit"],
+      ["v4_2026", "v3_2026"],
+      ["v4_2026", "no_prompt"],
+      ["v4_2026", "v4_no_inhabitation_discharge"],
+      ["v4_2026", "v4_no_scoped_walks"],
+      ["v4_2026", "v4_no_default_determination"],
+      ["v4_2026", "v4_no_branch_indexed_verdicts"]
     ]
   },
   "console_export": {
