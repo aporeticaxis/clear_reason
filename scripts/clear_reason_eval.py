@@ -527,11 +527,10 @@ def assemble_system_prompt(
         scripts_dir = str(base_dir / "scripts")
         if scripts_dir not in sys.path:
             sys.path.insert(0, scripts_dir)
-        from ablate import ablate_section as _ablate, ABLATION_HEADERS
-        header = ABLATION_HEADERS.get(ablate_section_id)
-        if not header:
+        from ablate import ablate_by_id, ABLATION_HEADERS
+        if ablate_section_id not in ABLATION_HEADERS:
             raise ValueError(f"Unknown ablation section: {ablate_section_id}")
-        prompt_text = _ablate(prompt_text, header)
+        prompt_text = ablate_by_id(prompt_text, ablate_section_id)
 
     parts = [prompt_text]
     for kf in version.get("knowledge_files", []):
@@ -1563,8 +1562,9 @@ def run_aggregate(args: argparse.Namespace) -> int:
         if compare_summary.get("pair_summaries"):
             for pair in compare_summary["pair_summaries"]:
                 vb = pair.get("version_b", "")
-                if vb.startswith("v3_no_"):
-                    section = vb.replace("v3_no_", "")
+                ablation_match = re.match(r"^v\d+_no_(.+)$", vb)
+                if ablation_match:
+                    section = ablation_match.group(1)
                     ablation_impact.append({
                         "section": section,
                         "version_a": pair["version_a"],
