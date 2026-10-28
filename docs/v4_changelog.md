@@ -371,7 +371,7 @@ after v4 ships.
 | O6 | Load-bearing threshold | C2's trigger depends on what counts as a change in commitments | Worked cases written into the spec |
 | O7 | Seminar cap of three forks | A guess | Use in seminar sessions |
 | O8 | First-walk rotation in autonomous mode | An alternative to tiebreaker-first: alternate the first walk across runs | B1 with and without rotation |
-| O9 | A worked v4 example | v3 teaches by example; v4 has none yet | Rewrite Example 2 (the party) with walks and a ledger |
+| O9 | A worked v4 example | v3 teaches by example; v4 had none | Rewrite Example 2 (the party) with walks and a ledger (done in `prompts/v4_2026.md`; see Repository notes) |
 
 ## Evidence and sources
 
@@ -407,9 +407,24 @@ How the changelog maps onto this test suite:
 
 - **Spec text (C1–C11)**: applied in `prompts/v4_2026.md`, registered as
   `v4_2026` in `prompt_versions.json`. Implicit-premise tags use v3's ASCII
-  hyphen style (`[IMPLICIT - TEXT]`), and the `[IMPLICIT]` tags in §f's own
-  example and causal-conjunction flag were renamed to the TEXT subtypes. The
-  `[IMPLICIT]` tags in Example Transformations are left as in v3 (O9).
+  hyphen style (`[IMPLICIT - TEXT]`).
+- **Post-deployment tidy-ups** (from comparing the deployed v4 Project text
+  with this changelog):
+  - C11 appears once, after Deep Audit, where it covers both Meta-Cognitive
+    Reflection and Deep Audit ("append to both" had produced two copies).
+  - Default Mode step 1 no longer says "proceed as before"; with no
+    load-bearing fork, CR gives a single working formalization and adds one
+    ledger line.
+  - No untagged `[IMPLICIT]` remains: §f's example, the causal-conjunction
+    flag, §j's temporal-essential flag and Example 3 use the TEXT/CR split
+    (Example 3's "real" → "anthropogenic" gloss is a reading choice, so it is
+    tagged CR).
+- **O9 (worked v4 example)**: addressed. Example 2 (the party) is rewritten
+  with a survey, tiebreaker working, a scoped first walk, a rival walk with
+  its second-level contrast, discharges, the Fork Ledger, branch-indexed
+  verdicts and CR's labeled view. Example 1 ends with the one-line ledger for
+  the no-fork case. Example 3 (iterative refinement) still shows no survey or
+  ledger.
 - **B2 Tiebreaker ablation**: available as `v4_no_default_determination`
   (compare against `v4_2026`; run on two or more models via `config.json`'s
   `collect.model`).
